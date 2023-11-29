@@ -29,4 +29,7 @@ ARG USER_NAME
 
 RUN useradd -m -u ${UID} -g root ${USER_NAME}
 
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
+RUN apt install symfony-cli
+
 RUN cd /usr/local/etc/php && cp php.ini-development php.ini
