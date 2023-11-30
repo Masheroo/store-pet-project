@@ -21,7 +21,7 @@ class JsonExceptionListener
 
     public function __invoke(ExceptionEvent $event): void
     {
-        $exception = $event->getThrowable()->getPrevious();
+        $exception = $event->getThrowable()->getPrevious() ?? $event->getThrowable();
 
         if (!in_array($exception::class, self::$exceptions)) {
             return;
