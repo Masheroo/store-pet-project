@@ -15,7 +15,7 @@ class ValidationFailedExceptionListener
 {
     public function __invoke(ExceptionEvent $event): void
     {
-        $exception = $event->getThrowable()->getPrevious();
+        $exception = $event->getThrowable()->getPrevious() ?? $event->getThrowable();
 
         if (!$exception instanceof ValidationFailedException) {
             return;
