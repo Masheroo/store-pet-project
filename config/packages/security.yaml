@@ -13,7 +13,6 @@ security:
     firewalls:
         login:
             provider: app_user_provider
-
             pattern: ^/api/login
             stateless: true
             json_login:
@@ -26,6 +25,8 @@ security:
             stateless: true
             jwt: ~
             entry_point: jwt
+            refresh_jwt:
+                check_path: api_login_refresh
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
