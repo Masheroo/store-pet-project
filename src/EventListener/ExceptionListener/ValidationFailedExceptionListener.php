@@ -37,12 +37,13 @@ class ValidationFailedExceptionListener
             $messages[] = [
                 'message' => $violation->getMessage(),
                 'property' => $violation->getPropertyPath(),
-                'gotValue' => $violation->getInvalidValue()
+                'gotValue' => $violation->getInvalidValue(),
             ];
         }
+
         return json_encode([
             'errors' => $messages,
-            'code' => $exception->getCode()
+            'code' => $exception->getCode(),
         ]);
     }
 }

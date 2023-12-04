@@ -14,7 +14,9 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+
 use Throwable;
+
 use function PHPUnit\Framework\assertArrayHasKey;
 
 final class JsonExceptionListenerTest extends TestCase
@@ -26,11 +28,11 @@ final class JsonExceptionListenerTest extends TestCase
     {
         return [
             [
-                new JsonException()
+                new JsonException(),
             ],
             [
-                new NotEncodableValueException()
-            ]
+                new NotEncodableValueException(),
+            ],
         ];
     }
 
@@ -46,7 +48,8 @@ final class JsonExceptionListenerTest extends TestCase
     }
 
     #[DataProvider('provideExceptions')]
-    public function testResponseBody(Throwable $exception){
+    public function testResponseBody(Throwable $exception)
+    {
         $kernel = new Kernel('test', true);
         $request = Request::create(uri: '', parameters: ['email' => 'example@mail.ru', 'password' => 'example']);
         $event = new ExceptionEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);

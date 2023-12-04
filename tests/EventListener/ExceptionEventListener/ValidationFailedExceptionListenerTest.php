@@ -15,14 +15,16 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
+
 use Throwable;
+
 use function PHPUnit\Framework\assertArrayHasKey;
 
 final class ValidationFailedExceptionListenerTest extends TestCase
 {
-    const PROPERTY_ERROR_MESSAGE = 'property error message';
-    const PROPERTY_ERROR_VALUE = 'property error value';
-    const PROPERTY_ERROR_PATH = 'property path';
+    public const PROPERTY_ERROR_MESSAGE = 'property error message';
+    public const PROPERTY_ERROR_VALUE = 'property error value';
+    public const PROPERTY_ERROR_PATH = 'property path';
     private EventDispatcher $eventDispatcher;
     private ValidationFailedExceptionListener $listener;
 
@@ -41,11 +43,11 @@ final class ValidationFailedExceptionListenerTest extends TestCase
                                 0,
                                 self::PROPERTY_ERROR_PATH,
                                 self::PROPERTY_ERROR_VALUE
-                            )
+                            ),
                         ]
                     )
-                )
-            ]
+                ),
+            ],
         ];
     }
 

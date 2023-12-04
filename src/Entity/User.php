@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -58,6 +58,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
+     *
+     * @return non-empty-array<array-key, string>
      */
     public function getRoles(): array
     {
@@ -78,7 +80,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }

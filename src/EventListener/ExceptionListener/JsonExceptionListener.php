@@ -16,7 +16,7 @@ class JsonExceptionListener
 {
     private static array $exceptions = [
         JsonException::class,
-        NotEncodableValueException::class
+        NotEncodableValueException::class,
     ];
 
     public function __invoke(ExceptionEvent $event): void
@@ -27,7 +27,6 @@ class JsonExceptionListener
             return;
         }
 
-
         $response = (new JsonResponse())
             ->setContent($this->exceptionToJson($exception))
             ->setStatusCode(Response::HTTP_BAD_REQUEST);
@@ -35,13 +34,18 @@ class JsonExceptionListener
         $event->setResponse($response);
     }
 
-    private function exceptionToJson(Throwable $exception): bool|string
+    /**
+     * @param Throwable $exception
+     * @return null|string
+     */
+    private function exceptionToJson(Throwable $exception): ?string
     {
-        return json_encode([
+        $return = json_encode([
             'error' => [
                 'message' => 'Unable to decode request',
-                'code' => $exception->getCode()
-            ]
+                'code' => $exception->getCode(),
+            ],
         ]);
+        return $return ?: null; 
     }
 }
