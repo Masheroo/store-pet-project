@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Repository\UserRepository;
 use App\Service\UserService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -19,7 +20,8 @@ use Symfony\Component\Validator\Exception\ValidationFailedException;
 class CreateAdminCommand extends Command
 {
     public function __construct(
-        private readonly UserService $userService
+        private readonly UserService $userService,
+        private readonly UserRepository $userRepository
     ) {
         parent::__construct();
     }
@@ -41,7 +43,8 @@ class CreateAdminCommand extends Command
         $io->writeln('Creating Admin...');
 
         try {
-            $this->userService->createAdmin($email, $password);
+            $admin = $this->userService->createAdmin($email, $password);
+            $this->userRepository->persistAndFlush($admin);
         } catch (ValidationFailedException $exception) {
             $violations = $exception->getViolations();
 

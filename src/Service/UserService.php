@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Email;
@@ -15,13 +14,28 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserService
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly ValidatorInterface $validator
     ) {
     }
 
-    public function createAdmin(string $email, string $password): void
+    public function createAdmin(string $email, string $password): User
+    {
+        $admin = $this->createUserWithoutRole($email, $password);
+        $admin->setRoles([User::ROLE_ADMIN]);
+
+        return $admin;
+    }
+
+    public function createUser(string $email, string $password): User
+    {
+        $user = $this->createUserWithoutRole($email, $password);
+        $user->setRoles([User::ROLE_USER]);
+
+        return $user;
+    }
+
+    private function createUserWithoutRole(string $email, string $password): User
     {
         $violations = $this->validator->validate(
             [
@@ -46,12 +60,11 @@ class UserService
             throw new ValidationFailedException('Validation Failed', $violations);
         }
 
-        $admin = new User();
+        $user = new User();
 
-        $admin->setEmail($email);
-        $admin->setPassword($this->passwordHasher->hashPassword($admin, $password));
-        $admin->setRoles([$admin::ROLE_ADMIN]);
+        $user->setEmail($email);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $password));
 
-        $this->userRepository->persistAndFlush($admin);
+        return $user;
     }
 }
