@@ -28,7 +28,7 @@ class ValidationFailedExceptionListener
         $event->setResponse($response);
     }
 
-    private function exceptionToJson(ValidationFailedException $exception): bool|string
+    private function exceptionToJson(ValidationFailedException $exception): null|string
     {
         $messages = [];
 
@@ -44,6 +44,6 @@ class ValidationFailedExceptionListener
         return json_encode([
             'errors' => $messages,
             'code' => $exception->getCode(),
-        ]);
+        ]) ?: null;
     }
 }
