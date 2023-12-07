@@ -4,15 +4,20 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity('email', message: 'This Email is already used.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const ROLE_ADMIN = 'ROLE_ADMIN';
     /** @var string */
     public const ROLE_USER = 'ROLE_USER';
+
+    public const PASSWORD_MIN_LENGTH = 6;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,17 +25,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\Email()]
+    #[Assert\NotBlank]
     private ?string $email = null;
 
     /** @var array<array-key, string> $roles */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var ?string The hashed password
-     */
     #[ORM\Column]
-    private ?string $password = null;
+    #[Assert\NotBlank()]
+    private string $password = '';
 
     public function getId(): ?int
     {
@@ -42,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
