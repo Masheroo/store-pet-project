@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Repository;
+
+use App\Entity\Lot;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\Persistence\ManagerRegistry;
+
+/**
+ * @extends ServiceEntityRepository<Lot>
+ *
+ * @method Lot|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Lot|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Lot[]    findAll()
+ * @method Lot[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class LotRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Lot::class);
+    }
+
+    public function persistAndFlush(Lot $lot): void
+    {
+        $this->persist($lot);
+        $this->getEntityManager()->flush($lot);
+    }
+
+    public function persist(Lot $lot): void
+    {
+        $this->getEntityManager()->persist($lot);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getFirst(): Lot
+    {
+        return $this->createQueryBuilder('lot')
+            ->orderBy('lot.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+//    /**
+//     * @return Lot[] Returns an array of Lot objects
+//     */
+//    public function findByExampleField($value): array
+//    {
+//        return $this->createQueryBuilder('l')
+//            ->andWhere('l.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->orderBy('l.id', 'ASC')
+//            ->setMaxResults(10)
+//            ->getQuery()
+//            ->getResult()
+//        ;
+//    }
+
+//    public function findOneBySomeField($value): ?Lot
+//    {
+//        return $this->createQueryBuilder('l')
+//            ->andWhere('l.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->getQuery()
+//            ->getOneOrNullResult()
+//        ;
+//    }
+}
