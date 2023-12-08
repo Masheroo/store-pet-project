@@ -6,7 +6,6 @@ use App\DataFixtures\UserFixture;
 use App\Repository\UserRepository;
 use App\Tests\Traits\ClientConfiguratorTrait;
 use App\Tests\Traits\ClientHelperTrait;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RegistrationTest extends WebTestCase
@@ -18,7 +17,7 @@ class RegistrationTest extends WebTestCase
     public const REGISTRATION_PASSWORD = 'password12345678';
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function testRegistrationSuccessful(): void
     {

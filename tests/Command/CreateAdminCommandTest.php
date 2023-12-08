@@ -4,7 +4,6 @@ namespace App\Tests\Command;
 
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -14,7 +13,7 @@ class CreateAdminCommandTest extends KernelTestCase
     public const COMMAND = 'app:create:admin';
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function testCreateAdminSuccessful(): void
     {

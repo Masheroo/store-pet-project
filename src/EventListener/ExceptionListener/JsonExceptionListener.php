@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
-use Throwable;
 
 #[AsEventListener(KernelEvents::EXCEPTION)]
 class JsonExceptionListener
@@ -34,7 +33,7 @@ class JsonExceptionListener
         $event->setResponse($response);
     }
 
-    private function exceptionToJson(Throwable $exception): ?string
+    private function exceptionToJson(\Throwable $exception): ?string
     {
         $return = json_encode([
             'error' => [

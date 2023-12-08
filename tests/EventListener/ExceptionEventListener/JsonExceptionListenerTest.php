@@ -15,8 +15,6 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
-use Throwable;
-
 use function PHPUnit\Framework\assertArrayHasKey;
 
 final class JsonExceptionListenerTest extends TestCase
@@ -37,7 +35,7 @@ final class JsonExceptionListenerTest extends TestCase
     }
 
     #[DataProvider('provideExceptions')]
-    public function testOnExceptionEventDispatch(Throwable $exception): void
+    public function testOnExceptionEventDispatch(\Throwable $exception): void
     {
         $kernel = new Kernel('test', true);
         $request = Request::createFromGlobals();
@@ -48,7 +46,7 @@ final class JsonExceptionListenerTest extends TestCase
     }
 
     #[DataProvider('provideExceptions')]
-    public function testResponseBody(Throwable $exception)
+    public function testResponseBody(\Throwable $exception)
     {
         $kernel = new Kernel('test', true);
         $request = Request::create(uri: '', parameters: ['email' => 'example@mail.ru', 'password' => 'example']);
