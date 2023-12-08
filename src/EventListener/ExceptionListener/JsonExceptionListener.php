@@ -34,10 +34,6 @@ class JsonExceptionListener
         $event->setResponse($response);
     }
 
-    /**
-     * @param Throwable $exception
-     * @return null|string
-     */
     private function exceptionToJson(Throwable $exception): ?string
     {
         $return = json_encode([
@@ -46,6 +42,7 @@ class JsonExceptionListener
                 'code' => $exception->getCode(),
             ],
         ]);
-        return $return ?: null; 
+
+        return $return ?: null;
     }
 }

@@ -13,5 +13,4 @@ trait ClientConfiguratorTrait
         $client->setServerParameter('CONTENT_TYPE', 'application/json');
         $client->setServerParameter('HTTP_ACCEPT', 'application/json');
     }
-
 }

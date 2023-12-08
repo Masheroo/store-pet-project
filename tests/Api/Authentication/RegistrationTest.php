@@ -2,6 +2,7 @@
 
 namespace App\Tests\Api\Authentication;
 
+use App\DataFixtures\UserFixture;
 use App\Repository\UserRepository;
 use App\Tests\Traits\ClientConfiguratorTrait;
 use App\Tests\Traits\ClientHelperTrait;
@@ -43,5 +44,25 @@ class RegistrationTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => self::REGISTRATION_EMAIL]);
 
         self::assertNotEmpty($user);
+    }
+
+    public function testRegistrationWithAlreadyUsedEmail(): void
+    {
+        $client = $this->createClient();
+        $this->configureJsonClient($client);
+
+        $client->request(
+            'POST',
+            '/api/registration',
+            content: json_encode([
+                'email' => UserFixture::EMAIL_USER1,
+                'password' => UserFixture::PASSWORD_USER1,
+            ])
+        );
+        $response = $this->getJsonDecodedResponse($client);
+
+        self::assertResponseStatusCodeSame(400);
+        self::assertArrayHasKey('errors', $response);
+        self::assertArrayHasKey('code', $response);
     }
 }

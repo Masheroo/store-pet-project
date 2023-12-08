@@ -9,6 +9,9 @@ use Doctrine\Persistence\ObjectManager;
 
 class UserFixture extends Fixture
 {
+    public const EMAIL_USER1 = 'user1@mail.ru';
+    public const PASSWORD_USER1 = 'user1@mail.password1';
+
     public function __construct(
         private readonly UserService $userService,
         private readonly UserRepository $userRepository
