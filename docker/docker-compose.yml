@@ -7,7 +7,7 @@ services:
       - ./nginx/site.conf:/etc/nginx/conf.d/default.conf
     image: nginx
     ports:
-      - "8080:80"
+      - "8081:80"
     links:
       - fpm
     networks:
@@ -39,7 +39,7 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=secret
     ports:
-      - 3306:3306
+      - 3307:3306
     networks:
       - net
     volumes:
@@ -48,7 +48,7 @@ services:
     container_name: mailhog
     image: mailhog/mailhog
     ports:
-      - 8025:8025
+      - 8026:8025
     networks:
       - net
 networks:
