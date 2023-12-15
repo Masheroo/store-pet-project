@@ -8,22 +8,32 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: LotRepository::class)]
 class Lot
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    /**
+     * @param int|null    $id
+     * @param string|null $title
+     * @param float|null  $cost
+     * @param int|null    $count
+     * @param string|null $image
+     */
+    public function __construct(
+        #[ORM\Id]
+        #[ORM\GeneratedValue]
+        #[ORM\Column]
+        private ?int $id = null,
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
+        #[ORM\Column(length: 255)]
+        private ?string $title = null,
 
-    #[ORM\Column]
-    private ?float $cost = null;
+        #[ORM\Column]
+        private ?float $cost = null,
 
-    #[ORM\Column]
-    private ?int $count = null;
+        #[ORM\Column]
+        private ?int $count = null,
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $image = null;
+        #[ORM\Column(length: 255, nullable: true)]
+        private ?string $image = null
+    ) {
+    }
 
     public function getId(): ?int
     {

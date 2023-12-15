@@ -4,7 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-
+    test_dir: '%kernel.project_dir%/tests'
+    test_files_dir: '%kernel.project_dir%/tests/files'
+    test_upload_tmp_dir: '%kernel.project_dir%%env(TMP_STORAGE_DIR)%'
+    upload_directory: '%kernel.project_dir%%env(IMAGE_STORAGE_DIRECTORY)%'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -19,6 +22,8 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+    App\Service\Manager\LocalImageManager:
+        arguments:
+            $uploadDir: '%upload_directory%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

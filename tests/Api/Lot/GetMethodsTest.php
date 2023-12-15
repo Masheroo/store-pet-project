@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Api;
+namespace App\Tests\Api\Lot;
 
 use App\DataFixtures\LotFixture;
 use App\DataFixtures\UserFixture;
@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Serializer;
 
-class ApiLotGetMethodsTest extends WebTestCase
+class GetMethodsTest extends WebTestCase
 {
     use ClientHelperTrait;
     use ClientConfiguratorTrait;
@@ -26,7 +26,7 @@ class ApiLotGetMethodsTest extends WebTestCase
     {
         $client = self::createClient();
         /** @var User $user */
-        $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => UserFixture::EMAIL_USER1]);
+        $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => UserFixture::EMAIL_USER]);
 
         $client->loginUser($user);
         $client->request('GET', 'api/lots');
@@ -48,7 +48,7 @@ class ApiLotGetMethodsTest extends WebTestCase
         /** @var Serializer $serializer */
         $serializer = $container->get('serializer');
         /** @var User $user */
-        $user = $container->get(UserRepository::class)->findOneBy(['email' => UserFixture::EMAIL_USER1]);
+        $user = $container->get(UserRepository::class)->findOneBy(['email' => UserFixture::EMAIL_USER]);
         /** @var Lot $lot */
         $lot = $container->get(LotRepository::class)->getFirst();
 
@@ -60,5 +60,4 @@ class ApiLotGetMethodsTest extends WebTestCase
         self::assertResponseStatusCodeSame(200);
         self::assertEquals($serializer->normalize($lot), $response);
     }
-
 }

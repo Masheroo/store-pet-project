@@ -54,8 +54,8 @@ class RegistrationTest extends WebTestCase
             'POST',
             '/api/registration',
             content: json_encode([
-                'email' => UserFixture::EMAIL_USER1,
-                'password' => UserFixture::PASSWORD_USER1,
+                'email' => UserFixture::EMAIL_USER,
+                'password' => UserFixture::PASSWORD_USER,
             ])
         );
         $response = $this->getJsonDecodedResponse($client);

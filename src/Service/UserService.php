@@ -46,4 +46,12 @@ class UserService
 
         return $user;
     }
+
+    public function createManager(string $email, string $password): User
+    {
+        $user = $this->createUserWithoutRole($email, $password);
+        $user->setRoles([User::ROLE_MANAGER]);
+        
+        return $user;
+    }
 }

@@ -44,4 +44,10 @@ class LotRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function deleteAndFlush(Lot $lot): void
+    {
+        $this->getEntityManager()->remove($lot);
+        $this->getEntityManager()->flush();
+    }
 }
