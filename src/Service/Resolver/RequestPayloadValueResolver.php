@@ -1,4 +1,46 @@
-<?php
+<?php /** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
+
+/** @noinspection PsalmGlobal */
 
 /*
  * This file is part of the Symfony package.
@@ -21,6 +63,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
 use Symfony\Component\Serializer\Exception\UnsupportedFormatException;
@@ -159,6 +202,9 @@ class RequestPayloadValueResolver implements ValueResolverInterface, EventSubscr
         ];
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     private function mapQueryString(Request $request, string $type, MapQueryString $attribute): ?object
     {
         if (!$data = $request->query->all()) {
@@ -173,6 +219,9 @@ class RequestPayloadValueResolver implements ValueResolverInterface, EventSubscr
         );
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     private function mapRequestPayload(Request $request, string $type, MapRequestPayload $attribute): ?object
     {
         if (null === $format = $request->getContentTypeFormat()) {

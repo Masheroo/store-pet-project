@@ -7,6 +7,7 @@ use App\Repository\LotRepository;
 use App\Request\CreateLotRequest;
 use App\Service\Lot\LotService;
 use App\Service\Resolver\RequestPayloadValueResolver;
+use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +29,9 @@ class LotController extends AbstractController
         return $this->json($lot);
     }
 
+    /**
+     * @throws FilesystemException
+     */
     #[Route('/lot', name: 'create_lot', methods: ['POST'])]
     public function createLot(
         #[MapRequestPayload(resolver: RequestPayloadValueResolver::class)]

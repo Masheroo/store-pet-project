@@ -16,6 +16,7 @@ class Lot
      * @param string|null $image
      */
     public function __construct(
+        /** @noinspection PhpPropertyCanBeReadonlyInspection */
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column]

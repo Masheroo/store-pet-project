@@ -6,6 +6,7 @@ use App\Entity\Lot;
 use App\Repository\LotRepository;
 use App\Request\CreateLotRequest;
 use App\Service\Manager\LocalImageManager;
+use League\Flysystem\FilesystemException;
 
 class LotService
 {
@@ -15,6 +16,9 @@ class LotService
     ) {
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function createLotFromRequest(CreateLotRequest $request): void
     {
         $lot = new Lot(

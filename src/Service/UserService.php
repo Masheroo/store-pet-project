@@ -51,7 +51,7 @@ class UserService
     {
         $user = $this->createUserWithoutRole($email, $password);
         $user->setRoles([User::ROLE_MANAGER]);
-        
+
         return $user;
     }
 }

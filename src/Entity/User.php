@@ -26,7 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Assert\Email()]
+    #[Assert\Email]
     #[Assert\NotBlank]
     private ?string $email = null;
 
@@ -35,7 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     #[ORM\Column]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank]
     private string $password = '';
 
     public function getId(): ?int
