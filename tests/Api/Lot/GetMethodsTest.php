@@ -24,16 +24,22 @@ class GetMethodsTest extends WebTestCase
      */
     public function testGetAllLotsSuccessful(): void
     {
+        self::ensureKernelShutdown();
         $client = self::createClient();
+        $container = self::getContainer();
         /** @var User $user */
-        $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => UserFixture::EMAIL_USER]);
+        $user = $container->get(UserRepository::class)->findOneBy(['email' => UserFixture::USER_EMAIL]);
+
+        /** @var LotRepository $lotRepository */
+        $lotRepository = $container->get(LotRepository::class);
+        $countOfLots = count($lotRepository->findAll());
 
         $client->loginUser($user);
         $client->request('GET', 'api/lots');
         $response = $this->getJsonDecodedResponse($client);
 
         self::assertResponseStatusCodeSame(200);
-        self::assertCount(LotFixture::COUNT_OF_LOTS, $response);
+        self::assertCount($countOfLots, $response);
     }
 
     /**
@@ -42,13 +48,14 @@ class GetMethodsTest extends WebTestCase
      */
     public function testGetOneLotSuccessful(): void
     {
+        self::ensureKernelShutdown();
         $client = self::createClient();
         $container = self::getContainer();
 
         /** @var Serializer $serializer */
         $serializer = $container->get('serializer');
         /** @var User $user */
-        $user = $container->get(UserRepository::class)->findOneBy(['email' => UserFixture::EMAIL_USER]);
+        $user = $container->get(UserRepository::class)->findOneBy(['email' => UserFixture::USER_EMAIL]);
         /** @var Lot $lot */
         $lot = $container->get(LotRepository::class)->getFirst();
 

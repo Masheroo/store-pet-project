@@ -17,6 +17,7 @@ class CreateAdminCommandTest extends KernelTestCase
      */
     public function testCreateAdminSuccessful(): void
     {
+        self::ensureKernelShutdown();
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 

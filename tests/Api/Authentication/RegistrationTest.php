@@ -21,6 +21,7 @@ class RegistrationTest extends WebTestCase
      */
     public function testRegistrationSuccessful(): void
     {
+        self::ensureKernelShutdown();
         $client = $this->createClient();
         $this->configureJsonClient($client);
 
@@ -47,6 +48,7 @@ class RegistrationTest extends WebTestCase
 
     public function testRegistrationWithAlreadyUsedEmail(): void
     {
+        self::ensureKernelShutdown();
         $client = $this->createClient();
         $this->configureJsonClient($client);
 
@@ -54,8 +56,8 @@ class RegistrationTest extends WebTestCase
             'POST',
             '/api/registration',
             content: json_encode([
-                'email' => UserFixture::EMAIL_USER,
-                'password' => UserFixture::PASSWORD_USER,
+                'email' => UserFixture::USER_EMAIL,
+                'password' => UserFixture::USER_PASSWORD,
             ])
         );
         $response = $this->getJsonDecodedResponse($client);

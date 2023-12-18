@@ -13,12 +13,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email', message: 'This Email is already used.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const ROLE_ADMIN = "ROLE_ADMIN";
     /** @var string */
-    public const ROLE_USER = 'ROLE_USER';
+    public const ROLE_USER = "ROLE_USER";
 
     public const PASSWORD_MIN_LENGTH = 6;
-    public const ROLE_MANAGER = 'ROLE_MANAGER';
+    public const ROLE_MANAGER = "ROLE_MANAGER";
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -23,13 +23,14 @@ class CreateTest extends WebTestCase
      */
     public function testCreateSuccessful(): void
     {
+        self::ensureKernelShutdown();
         $client = self::createClient();
         $container = self::getContainer();
 
         /** @var UserRepository $userRepository */
         $userRepository = $container->get(UserRepository::class);
         /** @var User $user */
-        $user = $userRepository->findOneBy(['email' => UserFixture::EMAIL_MANAGER]);
+        $user = $userRepository->findOneBy(['email' => UserFixture::MANAGER_EMAIL]);
         $client->loginUser($user);
 
         /** @var string $testFilesDir */

@@ -27,7 +27,7 @@ class LotRepository extends ServiceEntityRepository
     public function persistAndFlush(Lot $lot): void
     {
         $this->persist($lot);
-        $this->getEntityManager()->flush($lot);
+        $this->getEntityManager()->flush();
     }
 
     public function persist(Lot $lot): void

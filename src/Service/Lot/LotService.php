@@ -31,4 +31,13 @@ class LotService
 
         $this->repository->persistAndFlush($lot);
     }
+
+    /**
+     * @throws FilesystemException
+     */
+    public function deleteWithImage(Lot $lot): void
+    {
+        $this->repository->deleteAndFlush($lot);
+        $this->imageManager->deleteIfExists($lot->getImage());
+    }
 }

@@ -10,7 +10,6 @@ use App\Service\Resolver\RequestPayloadValueResolver;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,9 +37,19 @@ class LotController extends AbstractController
         CreateLotRequest $request,
         LotService $lotService,
     ): JsonResponse {
-
         $lotService->createLotFromRequest($request);
 
         return $this->json('');
+    }
+
+    /**
+     * @throws FilesystemException
+     */
+    #[Route('/lot/{id}', name: 'delete_lot', methods: ['DELETE'])]
+    public function delete(Lot $lot, LotService $lotService): JsonResponse
+    {
+        $lotService->deleteWithImage($lot);
+
+        return $this->json([]);
     }
 }

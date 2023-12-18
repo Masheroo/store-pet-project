@@ -46,4 +46,24 @@ class LocalImageManager implements ImageManagerInterface
     {
         $this->defaultStorage->copy($from, $this->uploadDir.DIRECTORY_SEPARATOR.$newFilename);
     }
+
+    /**
+     * @throws FilesystemException
+     */
+    public function deleteIfExists(?string $imageFilename): void
+    {
+        $filepath = $this->uploadDir.DIRECTORY_SEPARATOR.$imageFilename;
+        if (!file_exists($filepath)){
+            return;
+        }
+        $this->delete($filepath);
+    }
+
+    /**
+     * @throws FilesystemException
+     */
+    public function delete(string $filepath): void
+    {
+        $this->defaultStorage->delete($filepath);
+    }
 }
