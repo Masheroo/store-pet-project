@@ -2,13 +2,20 @@
 
 namespace Api\Lot;
 
+use App\DataFixtures\UserFixture;
 use App\Entity\User;
 use App\Repository\LotRepository;
+use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UpdateTest extends WebTestCase
 {
+    /**
+     * @covers \App\Controller\LotController::update
+     */
+    #[DataProvider('provideUsers')]
     public function testUpdateSuccessful(User $user): void
     {
         self::ensureKernelShutdown();
@@ -20,6 +27,7 @@ class UpdateTest extends WebTestCase
         $lotId = $lot->getId();
 
         $client->loginUser($user);
+        $client->setServerParameter('Content-Type', 'application/x-www-form-urlencoded');
 
         $testFilesDir = $container->getParameter('test_files_dir');
         $filePath = $testFilesDir.DIRECTORY_SEPARATOR.'test-update.png';
@@ -33,12 +41,19 @@ class UpdateTest extends WebTestCase
             'count' => 1,
         ];
 
-        $client->request('PATCH', '/api/lot/'.$lotId, $requestBody, files: [
-            new UploadedFile(
-                $filePath,
-                'test-update.png'
-            ),
-        ]);
+        $client->request(
+            'PATCH',
+            '/api/lot/'.$lotId,
+            parameters: $requestBody,
+            files: [
+                'image' => new UploadedFile(
+                    $filePath,
+                    'test-update.png',
+                    mimeType: 'image/png',
+                    test: true
+                ),
+            ],
+        );
 
         self::assertResponseIsSuccessful();
 
@@ -50,5 +65,20 @@ class UpdateTest extends WebTestCase
 
         $uploadDir = $container->getParameter('upload_directory');
         self::assertFileExists($uploadDir.DIRECTORY_SEPARATOR.$updatedLot->getImage());
+    }
+
+    public static function provideUsers(): array
+    {
+        $container = self::getContainer();
+        $userRepository = $container->get(UserRepository::class);
+
+        return [
+            [
+                $userRepository->findOneBy(['email' => UserFixture::ADMIN_EMAIL]),
+            ],
+            [
+                $userRepository->findOneBy(['email' => UserFixture::MANAGER_EMAIL]),
+            ],
+        ];
     }
 }

@@ -35,6 +35,11 @@ class LotRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($lot);
     }
 
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
     /**
      * @throws NonUniqueResultException
      */
