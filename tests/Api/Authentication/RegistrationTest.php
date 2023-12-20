@@ -6,7 +6,6 @@ use App\DataFixtures\UserFixture;
 use App\Repository\UserRepository;
 use App\Tests\Traits\ClientConfiguratorTrait;
 use App\Tests\Traits\ClientHelperTrait;
-use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RegistrationTest extends WebTestCase
@@ -18,10 +17,11 @@ class RegistrationTest extends WebTestCase
     public const REGISTRATION_PASSWORD = 'password12345678';
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function testRegistrationSuccessful(): void
     {
+        self::ensureKernelShutdown();
         $client = $this->createClient();
         $this->configureJsonClient($client);
 
@@ -48,6 +48,7 @@ class RegistrationTest extends WebTestCase
 
     public function testRegistrationWithAlreadyUsedEmail(): void
     {
+        self::ensureKernelShutdown();
         $client = $this->createClient();
         $this->configureJsonClient($client);
 
@@ -55,8 +56,8 @@ class RegistrationTest extends WebTestCase
             'POST',
             '/api/registration',
             content: json_encode([
-                'email' => UserFixture::EMAIL_USER1,
-                'password' => UserFixture::PASSWORD_USER1,
+                'email' => UserFixture::USER_EMAIL,
+                'password' => UserFixture::USER_PASSWORD,
             ])
         );
         $response = $this->getJsonDecodedResponse($client);
