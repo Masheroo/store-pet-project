@@ -1,47 +1,5 @@
-<?php /** @noinspection PsalmGlobal */
-
+<?php
 /** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
-/** @noinspection PsalmGlobal */
-
 /*
  * This file is part of the Symfony package.
  *

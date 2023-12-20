@@ -58,7 +58,7 @@ class LotController extends AbstractController
     }
 
     #[IsGranted('ROLE_MANAGER')]
-    #[Route('/lot/{id}', name: 'update_lot', methods: ['PATCH'])]
+    #[Route('/lot/{id}', name: 'update_lot', methods: ['POST'])]
     public function update(
         #[MapRequestPayload(resolver: RequestPayloadValueResolver::class)]
         UpdateLotRequest $request,

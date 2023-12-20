@@ -24,3 +24,6 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+/.phpunit.cache/test-results
+/public/uploads/
+/tests/project-files/public/uploads/

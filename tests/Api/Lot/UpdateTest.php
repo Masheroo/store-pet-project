@@ -25,6 +25,7 @@ class UpdateTest extends WebTestCase
         $lotRepository = $container->get(LotRepository::class);
         $lot = $lotRepository->getFirst();
         $lotId = $lot->getId();
+        $lotImage = $lot->getImage();
 
         $client->loginUser($user);
         $client->setServerParameter('Content-Type', 'application/x-www-form-urlencoded');
@@ -42,7 +43,7 @@ class UpdateTest extends WebTestCase
         ];
 
         $client->request(
-            'PATCH',
+            'POST',
             '/api/lot/'.$lotId,
             parameters: $requestBody,
             files: [
@@ -61,7 +62,7 @@ class UpdateTest extends WebTestCase
         self::assertEquals($requestBody['title'], $updatedLot->getTitle());
         self::assertEquals($requestBody['cost'], $updatedLot->getCost());
         self::assertEquals($requestBody['count'], $updatedLot->getCount());
-        self::assertNotEquals($updatedLot->getImage(), $lot->getImage());
+        self::assertNotEquals($updatedLot->getImage(), $$lotImage);
 
         $uploadDir = $container->getParameter('upload_directory');
         self::assertFileExists($uploadDir.DIRECTORY_SEPARATOR.$updatedLot->getImage());

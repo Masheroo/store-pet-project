@@ -20,7 +20,7 @@ class LocalImageManager implements ImageManagerInterface
      */
     public function saveUploadedImage(UploadedFile $uploadedFile): string
     {
-        $newFilename = uniqid().'.'.$uploadedFile->getExtension();
+        $newFilename = uniqid().'.'.$uploadedFile->getClientOriginalExtension();
         $this->defaultStorage->move($uploadedFile->getRealPath(), $this->uploadDir.DIRECTORY_SEPARATOR.$newFilename);
 
         return $newFilename;
