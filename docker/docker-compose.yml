@@ -51,6 +51,21 @@ services:
       - 8026:8025
     networks:
       - net
+  minio:
+    container_name: minio
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9090"
+    restart: always
+    ports:
+      - 9100:9000
+      - 9190:9090
+    volumes:
+      - ~/minio/data:/data
+    environment:
+      - MINIO_ROOT_USER=user
+      - MINIO_ROOT_PASSWORD=secret123
+    networks:
+      - net
 networks:
   net:
     name: network
