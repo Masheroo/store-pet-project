@@ -4,6 +4,7 @@ namespace App\Service\Manager;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -66,14 +67,12 @@ class LocalImageManager implements ImageManagerInterface
         $this->defaultStorage->delete($filename);
     }
 
-    public function getFile(string $filename): string
+    public function getPublicLink(string $filename): string
     {
-        return $this->defaultStorage->read($filename);
-    }
+        if (!$this->defaultStorage->fileExists($filename)){
+            throw new FileNotFoundException();
+        }
 
-//    public function fileExists($filename): bool
-//    {
-//        return $this->defaultStorage->fileExists($filename);
-//        $this->defaultStorage->
-//    }
+        return $this->defaultStorage->publicUrl($filename);
+    }
 }

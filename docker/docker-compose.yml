@@ -54,7 +54,7 @@ services:
   minio:
     container_name: minio
     image: quay.io/minio/minio
-    command: server /data --console-address ":9090"
+    command: server /data --console-address ":9190" --address ":9100"
     restart: always
     ports:
       - 9100:9000
