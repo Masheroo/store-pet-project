@@ -2,6 +2,18 @@
 flysystem:
     storages:
         default.storage:
-            adapter: 'local'
+            adapter: 'lazy'
             options:
-                directory: '/'
+                source: '%env(APP_UPLOADS_SOURCE)%'
+        uploads.storage.local:
+            adapter: 'local'
+            public_url: '%env(BASE_URL)%'
+            options:
+                directory: '%upload_directory%'
+        uploads.storage.aws:
+            adapter: 'aws'
+            options:
+                client: 'Aws\S3\S3Client'
+                bucket: 'upload'
+                prefix: 'myprefix'
+

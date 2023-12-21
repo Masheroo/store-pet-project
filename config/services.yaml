@@ -22,8 +22,18 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-    App\Service\Manager\LocalImageManager:
+    App\DataFixtures\LotFixture:
         arguments:
-            $uploadDir: '%upload_directory%'
+            $projectDir: '%kernel.project_dir%'
+    Aws\S3\S3Client:
+        arguments:
+            $args:
+                version: latest
+                region: ru
+                endpoint: '%env(MINIO_ENDPOINT)%'
+                use_path_style_endpoint: true
+                credentials:
+                    key: '%env(MINIO_ACCESS_KEY)%'
+                    secret: '%env(MINIO_SECRET_KEY)%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

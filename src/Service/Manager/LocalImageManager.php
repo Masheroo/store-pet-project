@@ -4,13 +4,13 @@ namespace App\Service\Manager;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class LocalImageManager implements ImageManagerInterface
 {
     public function __construct(
-        private readonly string $uploadDir,
         private readonly FilesystemOperator $defaultStorage,
     ) {
     }
@@ -21,7 +21,7 @@ class LocalImageManager implements ImageManagerInterface
     public function saveUploadedImage(UploadedFile $uploadedFile): string
     {
         $newFilename = uniqid().'.'.$uploadedFile->getClientOriginalExtension();
-        $this->defaultStorage->move($uploadedFile->getRealPath(), $this->uploadDir.DIRECTORY_SEPARATOR.$newFilename);
+        $this->defaultStorage->write($newFilename, $uploadedFile->getContent());
 
         return $newFilename;
     }
@@ -35,35 +35,44 @@ class LocalImageManager implements ImageManagerInterface
     {
         $file = new File($pathToFile, true);
         $newFilename = uniqid().'.'.$file->getExtension();
-        $this->defaultStorage->move($file->getRealPath(), $this->uploadDir.DIRECTORY_SEPARATOR.$newFilename);
+        $this->defaultStorage->write($newFilename, $file->getContent());
         return $newFilename;
     }
 
     /**
      * @throws FilesystemException
      */
-    public function copyToUploadDir(string $from, string $newFilename): void
+    public function copyToUploadDir(string $from, string $to): void
     {
-        $this->defaultStorage->copy($from, $this->uploadDir.DIRECTORY_SEPARATOR.$newFilename);
+        $file = new File($from, true);
+        $this->defaultStorage->write($to, $file->getContent());
     }
 
     /**
      * @throws FilesystemException
      */
-    public function deleteIfExists(string $imageFilename): void
+    public function deleteIfExists(string $filename): void
     {
-        $filepath = $this->uploadDir.DIRECTORY_SEPARATOR.$imageFilename;
-        if (!file_exists($filepath)){
+        if (!$this->defaultStorage->fileExists($filename)){
             return;
         }
-        $this->delete($filepath);
+        $this->delete($filename);
     }
 
     /**
      * @throws FilesystemException
      */
-    public function delete(string $filepath): void
+    public function delete(string $filename): void
     {
-        $this->defaultStorage->delete($filepath);
+        $this->defaultStorage->delete($filename);
+    }
+
+    public function getPublicLink(string $filename): string
+    {
+        if (!$this->defaultStorage->fileExists($filename)){
+            throw new FileNotFoundException();
+        }
+
+        return $this->defaultStorage->publicUrl($filename);
     }
 }
