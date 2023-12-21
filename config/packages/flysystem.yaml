@@ -7,6 +7,7 @@ flysystem:
                 source: '%env(APP_UPLOADS_SOURCE)%'
         uploads.storage.local:
             adapter: 'local'
+            public_url: '%env(BASE_URL)%'
             options:
                 directory: '%upload_directory%'
         uploads.storage.aws:
