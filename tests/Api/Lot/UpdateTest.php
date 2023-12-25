@@ -53,6 +53,7 @@ class UpdateTest extends WebTestCase
                     mimeType: 'image/png',
                     test: true
                 ),
+
             ],
         );
 
@@ -62,7 +63,7 @@ class UpdateTest extends WebTestCase
         self::assertEquals($requestBody['title'], $updatedLot->getTitle());
         self::assertEquals($requestBody['cost'], $updatedLot->getCost());
         self::assertEquals($requestBody['count'], $updatedLot->getCount());
-        self::assertNotEquals($updatedLot->getImage(), $$lotImage);
+        self::assertNotEquals($updatedLot->getImage(), $lotImage);
 
         $uploadDir = $container->getParameter('upload_directory');
         self::assertFileExists($uploadDir.DIRECTORY_SEPARATOR.$updatedLot->getImage());
