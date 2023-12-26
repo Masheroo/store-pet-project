@@ -67,10 +67,13 @@ services:
     networks:
       - net
   rabbitmq:
+    container_name: rabbitmq
     image: rabbitmq:3.7-management
     ports:
       - "2020:5672"
       - "3030:15672"
+    networks:
+      - net
 networks:
   net:
     name: network

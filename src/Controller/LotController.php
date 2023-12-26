@@ -3,18 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\Lot;
+use App\Message\NewLotEmailMessage;
 use App\Notifier\EmailNotifier;
 use App\Repository\LotRepository;
 use App\Repository\UserRepository;
 use App\Request\CreateLotRequest;
 use App\Request\UpdateLotRequest;
 use App\Service\Lot\LotService;
+use App\Service\Manager\LocalImageManager;
 use App\Service\Resolver\RequestPayloadValueResolver;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -35,7 +38,6 @@ class LotController extends AbstractController
 
     /**
      * @throws FilesystemException
-     * @throws TransportExceptionInterface
      */
     #[IsGranted('ROLE_MANAGER')]
     #[Route('/lot', name: 'create_lot', methods: ['POST'])]
@@ -43,14 +45,22 @@ class LotController extends AbstractController
         #[MapRequestPayload(resolver: RequestPayloadValueResolver::class)]
         CreateLotRequest $request,
         LotService $lotService,
-        EmailNotifier $notifier,
+        MessageBusInterface $messageBus,
+        LocalImageManager $imageManager,
         UserRepository $userRepository
     ): JsonResponse {
         $lot = $lotService->createLotFromRequest($request);
 
         $users = $userRepository->findAll();
         foreach ($users as $user) {
-            $notifier->sendEmailAboutNewLot($lot, $user->getEmail());
+            $messageBus->dispatch(new NewLotEmailMessage(
+                $lot->getId(),
+                $lot->getTitle(),
+                $lot->getCount(),
+                $lot->getCost(),
+                $imageManager->getPublicLink($lot->getImage()),
+                $user->getEmail()
+            ));
         }
 
         return $this->json($lot);
