@@ -18,6 +18,9 @@ RUN apt-get update && apt-get install -y \
     && pecl install  -f xdebug \
     && docker-php-ext-enable xdebug
 
+RUN apt-get install librabbitmq-dev -y
+RUN pecl install amqp
+RUN docker-php-ext-enable amqp
 
 RUN touch /tmp/xdebug.log && chmod 777 /tmp/xdebug.log
 

@@ -20,7 +20,7 @@ class LotService
     /**
      * @throws FilesystemException
      */
-    public function createLotFromRequest(CreateLotRequest $request): void
+    public function createLotFromRequest(CreateLotRequest $request): Lot
     {
         $lot = new Lot(
             null,
@@ -31,6 +31,8 @@ class LotService
         );
 
         $this->repository->persistAndFlush($lot);
+
+        return $lot;
     }
 
     public function updateLotFromRequest(Lot $lot,  UpdateLotRequest $request): Lot

@@ -22,9 +22,6 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-    App\DataFixtures\LotFixture:
-        arguments:
-            $projectDir: '%kernel.project_dir%'
     Aws\S3\S3Client:
         arguments:
             $args:
@@ -35,5 +32,8 @@ services:
                 credentials:
                     key: '%env(MINIO_ACCESS_KEY)%'
                     secret: '%env(MINIO_SECRET_KEY)%'
+    App\Notifier\EmailNotifier:
+        arguments:
+            $recipientEmail: '%env(RECIPIENT_EMAIL)%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
