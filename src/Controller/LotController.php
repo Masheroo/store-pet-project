@@ -3,16 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Lot;
+use App\Notifier\EmailNotifier;
 use App\Repository\LotRepository;
+use App\Repository\UserRepository;
 use App\Request\CreateLotRequest;
+use App\Request\UpdateLotRequest;
 use App\Service\Lot\LotService;
 use App\Service\Resolver\RequestPayloadValueResolver;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Request\UpdateLotRequest;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api')]
@@ -32,6 +35,7 @@ class LotController extends AbstractController
 
     /**
      * @throws FilesystemException
+     * @throws TransportExceptionInterface
      */
     #[IsGranted('ROLE_MANAGER')]
     #[Route('/lot', name: 'create_lot', methods: ['POST'])]
@@ -39,10 +43,17 @@ class LotController extends AbstractController
         #[MapRequestPayload(resolver: RequestPayloadValueResolver::class)]
         CreateLotRequest $request,
         LotService $lotService,
+        EmailNotifier $notifier,
+        UserRepository $userRepository
     ): JsonResponse {
-        $lotService->createLotFromRequest($request);
+        $lot = $lotService->createLotFromRequest($request);
 
-        return $this->json('');
+        $users = $userRepository->findAll();
+        foreach ($users as $user) {
+            $notifier->sendEmailAboutNewLot($lot, $user->getEmail());
+        }
+
+        return $this->json($lot);
     }
 
     /**
