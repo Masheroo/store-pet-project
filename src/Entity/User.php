@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Exceptions\LackOfBalanceException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -13,12 +14,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email', message: 'This Email is already used.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const ROLE_ADMIN = "ROLE_ADMIN";
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
     /** @var string */
-    public const ROLE_USER = "ROLE_USER";
+    public const ROLE_USER = 'ROLE_USER';
 
     public const PASSWORD_MIN_LENGTH = 6;
-    public const ROLE_MANAGER = "ROLE_MANAGER";
+    public const ROLE_MANAGER = 'ROLE_MANAGER';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -37,6 +38,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $password = '';
+
+    #[ORM\Column]
+    private float $balance = 0;
 
     public function getId(): ?int
     {
@@ -105,5 +109,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getBalance(): float
+    {
+        return $this->balance;
+    }
+
+    public function replenishBalance(float $amount): void
+    {
+        $this->balance += $amount;
+    }
+
+    /**
+     * @throws LackOfBalanceException
+     */
+    public function subtractionFromBalance(float $amount): void
+    {
+        if ($this->balance < $amount) {
+            throw new LackOfBalanceException();
+        }
+        $this->balance -= $amount;
     }
 }
