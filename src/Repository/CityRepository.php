@@ -49,4 +49,9 @@ class CityRepository extends ServiceEntityRepository
     {
         $this->getEntityManager()->persist($city);
     }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
 }
