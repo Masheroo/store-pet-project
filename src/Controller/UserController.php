@@ -33,4 +33,14 @@ class UserController extends AbstractController
     {
         return $this->json($userRepository->findAll());
     }
+
+    #[IsGranted(User::ROLE_ADMIN)]
+    #[Route('/user/{id}/switch', name: 'switch_user_to_admin', methods: ['POST'])]
+    public function switchUserToAdmin(User $user, UserRepository $userRepository): JsonResponse
+    {
+        $user->setRoles([User::ROLE_ADMIN]);
+        $userRepository->flush();
+
+        return $this->json('Success');
+    }
 }
