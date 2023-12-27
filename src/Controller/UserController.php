@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Exceptions\RoleDoesNotExistsException;
 use App\Repository\UserRepository;
 use App\Request\ReplenishRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,11 +35,18 @@ class UserController extends AbstractController
         return $this->json($userRepository->findAll());
     }
 
+    /**
+     * @throws RoleDoesNotExistsException
+     */
     #[IsGranted(User::ROLE_ADMIN)]
-    #[Route('/user/{id}/switch', name: 'switch_user_to_admin', methods: ['POST'])]
-    public function switchUserToAdmin(User $user, UserRepository $userRepository): JsonResponse
+    #[Route('/user/{id}/role/{role}', name: 'switch_user_to_admin', methods: ['POST'])]
+    public function switchUserToAdmin(User $user, string $role, UserRepository $userRepository): JsonResponse
     {
-        $user->setRoles([User::ROLE_ADMIN]);
+        if (!array_key_exists($role, User::ROLES)) {
+            throw new RoleDoesNotExistsException(sprintf('Role %s does not exists. Available roles: %s', $role, implode(', ', array_keys(User::ROLES))));
+        }
+
+        $user->setRoles([User::ROLES[$role]]);
         $userRepository->flush();
 
         return $this->json('Success');

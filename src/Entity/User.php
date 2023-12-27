@@ -14,6 +14,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email', message: 'This Email is already used.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const ROLES = [
+        'admin' => self::ROLE_ADMIN,
+        'manager' => self::ROLE_MANAGER,
+        'user' => self::ROLE_USER
+    ];
     public const ROLE_ADMIN = 'ROLE_ADMIN';
     /** @var string */
     public const ROLE_USER = 'ROLE_USER';

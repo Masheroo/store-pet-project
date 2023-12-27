@@ -16,6 +16,7 @@ class UserNormalizer implements NormalizerInterface
         return [
             'id' => $object->getId(),
             'email' => $object->getEmail(),
+            'role' => array_search($object->getRoles()[0], User::ROLES),
             'balance' => $object->getBalance(),
         ];
     }
