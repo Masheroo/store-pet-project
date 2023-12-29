@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Authentication;
 
 use App\DataFixtures\UserFixture;
+use App\Repository\CityRepository;
 use App\Repository\UserRepository;
 use App\Tests\Traits\ClientConfiguratorTrait;
 use App\Tests\Traits\ClientHelperTrait;
@@ -25,12 +26,18 @@ class RegistrationTest extends WebTestCase
         $client = $this->createClient();
         $this->configureJsonClient($client);
 
+        $container = self::getContainer();
+        /** @var CityRepository $cityRepository */
+        $cityRepository = $container->get(CityRepository::class);
+        $city = $cityRepository->findAll()[0];
+
         $client->request(
             'POST',
             '/api/registration',
             content: json_encode([
                 'email' => self::REGISTRATION_EMAIL,
                 'password' => self::REGISTRATION_PASSWORD,
+                'city' => $city->getId(),
             ])
         );
         $response = $this->getJsonDecodedResponse($client);
@@ -52,12 +59,18 @@ class RegistrationTest extends WebTestCase
         $client = $this->createClient();
         $this->configureJsonClient($client);
 
+        $container = self::getContainer();
+        /** @var CityRepository $cityRepository */
+        $cityRepository = $container->get(CityRepository::class);
+        $city = $cityRepository->findAll()[0];
+
         $client->request(
             'POST',
             '/api/registration',
             content: json_encode([
                 'email' => UserFixture::USER_EMAIL,
                 'password' => UserFixture::USER_PASSWORD,
+                'city' => $city->getId(),
             ])
         );
         $response = $this->getJsonDecodedResponse($client);

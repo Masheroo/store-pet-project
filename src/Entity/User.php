@@ -17,7 +17,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const ROLES = [
         'admin' => self::ROLE_ADMIN,
         'manager' => self::ROLE_MANAGER,
-        'user' => self::ROLE_USER
+        'user' => self::ROLE_USER,
     ];
     public const ROLE_ADMIN = 'ROLE_ADMIN';
     /** @var string */
@@ -46,6 +46,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private float $balance = 0;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?City $city = null;
 
     public function getId(): ?int
     {
@@ -112,7 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        // If you store any temporary, sensitive dat    a on the user, clear it here
         // $this->plainPassword = null;
     }
 
@@ -135,5 +139,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             throw new LackOfBalanceException();
         }
         $this->balance -= $amount;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
+
+        return $this;
     }
 }

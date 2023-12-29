@@ -43,7 +43,7 @@ class CreateAdminCommand extends Command
         $io->writeln('Creating Admin...');
 
         try {
-            $admin = $this->userService->createAdmin($email, $password);
+            $admin = $this->userService->createAdmin($email, $password, null);
             $this->userRepository->persistAndFlush($admin);
         } catch (ValidationFailedException $exception) {
             $violations = $exception->getViolations();
