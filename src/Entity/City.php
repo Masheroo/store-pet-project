@@ -77,33 +77,6 @@ class City
     /**
      * @return Collection<int, CityDiscount>
      */
-    public function getDiscounts(): Collection
-    {
-        return $this->discounts;
-    }
-
-    public function addDiscount(CityDiscount $discount): static
-    {
-        if (!$this->discounts->contains($discount)) {
-            $this->discounts->add($discount);
-            $discount->addCity($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDiscount(CityDiscount $discount): static
-    {
-        if ($this->discounts->removeElement($discount)) {
-            $discount->removeCity($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CityDiscount>
-     */
     public function getCityDiscounts(): Collection
     {
         return $this->cityDiscounts;
