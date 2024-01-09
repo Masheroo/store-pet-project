@@ -10,6 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CityRepository::class)]
 class City
 {
+    #[ORM\OneToMany(mappedBy: 'City', targetEntity: CityDiscount::class)]
+    private Collection $cityDiscounts;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\GeneratedValue]
@@ -18,9 +21,11 @@ class City
 
         #[ORM\Column(length: 255)]
         private ?string $name = null,
+
         #[ORM\OneToMany(mappedBy: 'city', targetEntity: User::class)]
         private Collection $users = new ArrayCollection()
     ) {
+        $this->cityDiscounts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -61,9 +66,65 @@ class City
     public function removeUser(User $user): static
     {
         if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
             if ($user->getCity() === $this) {
                 $user->setCity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CityDiscount>
+     */
+    public function getDiscounts(): Collection
+    {
+        return $this->discounts;
+    }
+
+    public function addDiscount(CityDiscount $discount): static
+    {
+        if (!$this->discounts->contains($discount)) {
+            $this->discounts->add($discount);
+            $discount->addCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDiscount(CityDiscount $discount): static
+    {
+        if ($this->discounts->removeElement($discount)) {
+            $discount->removeCity($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CityDiscount>
+     */
+    public function getCityDiscounts(): Collection
+    {
+        return $this->cityDiscounts;
+    }
+
+    public function addCityDiscount(CityDiscount $cityDiscount): static
+    {
+        if (!$this->cityDiscounts->contains($cityDiscount)) {
+            $this->cityDiscounts->add($cityDiscount);
+            $cityDiscount->setCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCityDiscount(CityDiscount $cityDiscount): static
+    {
+        if ($this->cityDiscounts->removeElement($cityDiscount)) {
+            // set the owning side to null (unless already changed)
+            if ($cityDiscount->getCity() === $this) {
+                $cityDiscount->setCity(null);
             }
         }
 

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\City;
 use App\Entity\User;
+use App\Request\Discount\CreateDiscountRequest;
 use App\Request\Discount\CreateVolumeDiscountRequest;
 use App\Service\Discount\DiscountService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +23,16 @@ class DiscountController extends AbstractController
         CreateVolumeDiscountRequest $request,
         DiscountService $discountService
     ): JsonResponse {
-        return $this->json($discountService->createVolumeDiscountFromRequest($request));
+        return $this->json($discountService->createVolumeDiscount($request->amount, $request->discount));
+    }
+
+    #[IsGranted(User::ROLE_ADMIN)]
+    #[Route('/city/{id}', name: 'create_city_discount', methods: 'POST')]
+    public function createCityDiscount(
+        City $city,
+        #[MapRequestPayload] CreateDiscountRequest $request,
+        DiscountService $discountService
+    ): JsonResponse {
+        return $this->json($discountService->createCityDiscount($city, $request->discount));
     }
 }

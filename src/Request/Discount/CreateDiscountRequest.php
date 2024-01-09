@@ -3,12 +3,13 @@
 namespace App\Request\Discount;
 
 use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\LessThan;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class CreateVolumeDiscountRequest extends CreateDiscountRequest
+class CreateDiscountRequest
 {
     #[NotBlank]
+    #[LessThan(1)]
     #[GreaterThan(0)]
-    public int $amount;
-
+    public float $discount;
 }
