@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Discount;
 
+use App\Entity\City;
 use App\Repository\CityDiscountRepository;
 use Doctrine\ORM\Mapping as ORM;
 

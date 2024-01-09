@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Discount;
 
 use App\Repository\VolumeDiscountRepository;
 use Doctrine\ORM\Mapping as ORM;

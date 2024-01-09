@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Discount;
 
+use App\Entity\User;
 use App\Repository\UserDiscountRepository;
 use Doctrine\ORM\Mapping as ORM;
 

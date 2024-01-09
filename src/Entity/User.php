@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Discount\UserDiscount;
 use App\Exceptions\LackOfBalanceException;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;

@@ -3,10 +3,10 @@
 namespace App\Service\Discount;
 
 use App\Entity\City;
-use App\Entity\CityDiscount;
+use App\Entity\Discount\CityDiscount;
+use App\Entity\Discount\UserDiscount;
+use App\Entity\Discount\VolumeDiscount;
 use App\Entity\User;
-use App\Entity\UserDiscount;
-use App\Entity\VolumeDiscount;
 use Doctrine\ORM\EntityManagerInterface;
 
 class DiscountService

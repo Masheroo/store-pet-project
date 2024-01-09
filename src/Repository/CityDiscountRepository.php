@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\CityDiscount;
+use App\Entity\Discount\CityDiscount;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

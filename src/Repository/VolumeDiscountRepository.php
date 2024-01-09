@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\VolumeDiscount;
+use App\Entity\Discount\VolumeDiscount;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
