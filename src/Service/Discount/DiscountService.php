@@ -6,6 +6,8 @@ use App\Entity\City;
 use App\Entity\Discount\CityDiscount;
 use App\Entity\Discount\UserDiscount;
 use App\Entity\Discount\VolumeDiscount;
+use App\Entity\Lot;
+use App\Entity\LotDiscount;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -45,5 +47,13 @@ class DiscountService
         $this->persistAndFlush($userDiscount);
 
         return $userDiscount;
+    }
+
+    public function createLotDiscount(Lot $lot, float $discount, int $countOfPurchases): LotDiscount
+    {
+        $lotDiscount = new LotDiscount($countOfPurchases, $lot, $discount);
+        $this->persistAndFlush($lotDiscount);
+
+        return $lotDiscount;
     }
 }

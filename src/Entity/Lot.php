@@ -3,11 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\LotRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LotRepository::class)]
 class Lot
 {
+    #[ORM\OneToMany(mappedBy: 'lot', targetEntity: LotDiscount::class)]
+    private Collection $lotDiscounts;
+
     /**
      * @param int|null    $id
      * @param string|null $title
@@ -33,7 +38,9 @@ class Lot
 
         #[ORM\Column(length: 255, nullable: true)]
         private ?string $image = null
-    ) {
+    )
+    {
+        $this->lotDiscounts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,5 +94,13 @@ class Lot
         $this->image = $image;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, LotDiscount>
+     */
+    public function getLotDiscounts(): Collection
+    {
+        return $this->lotDiscounts;
     }
 }
