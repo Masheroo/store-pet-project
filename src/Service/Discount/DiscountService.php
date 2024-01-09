@@ -4,6 +4,8 @@ namespace App\Service\Discount;
 
 use App\Entity\City;
 use App\Entity\CityDiscount;
+use App\Entity\User;
+use App\Entity\UserDiscount;
 use App\Entity\VolumeDiscount;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -35,5 +37,13 @@ class DiscountService
         $this->persistAndFlush($cityDiscount);
 
         return $cityDiscount;
+    }
+
+    public function createUserDiscount(User $user, float $discount): UserDiscount
+    {
+        $userDiscount = new UserDiscount($user, $discount);
+        $this->persistAndFlush($userDiscount);
+
+        return $userDiscount;
     }
 }

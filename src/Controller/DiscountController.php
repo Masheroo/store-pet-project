@@ -35,4 +35,13 @@ class DiscountController extends AbstractController
     ): JsonResponse {
         return $this->json($discountService->createCityDiscount($city, $request->discount));
     }
+
+    #[Route('/user/{id}', name: 'create_user_discount', methods: 'POST')]
+    public function createUserDiscount(
+        User $user,
+        #[MapRequestPayload] CreateDiscountRequest $request,
+        DiscountService $discountService
+    ): JsonResponse {
+        return $this->json($discountService->createUserDiscount($user, $request->discount));
+    }
 }

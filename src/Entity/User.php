@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Exceptions\LackOfBalanceException;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -50,6 +52,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: true)]
     private ?City $city = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserDiscount::class)]
+    private Collection $userDiscounts;
+
+    public function __construct()
+    {
+        $this->userDiscounts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -151,5 +161,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->city = $city;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, UserDiscount>
+     */
+    public function getDiscounts(): Collection
+    {
+        return $this->userDiscounts;
     }
 }
