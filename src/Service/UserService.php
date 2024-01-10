@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\City;
 use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
@@ -17,26 +18,27 @@ class UserService
 
     public function createAdmin(?string $email, string $password): User
     {
-        $admin = $this->createUserWithoutRole($email, $password);
+        $admin = $this->createUserWithoutRole($email, $password, null);
         $admin->setRoles([User::ROLE_ADMIN]);
 
         return $admin;
     }
 
-    public function createUser(?string $email, string $password): User
+    public function createUser(?string $email, string $password, ?City $city): User
     {
-        $user = $this->createUserWithoutRole($email, $password);
+        $user = $this->createUserWithoutRole($email, $password, $city);
         $user->setRoles([User::ROLE_USER]);
 
         return $user;
     }
 
-    private function createUserWithoutRole(?string $email, string $password): User
+    private function createUserWithoutRole(?string $email, string $password, ?City $city): User
     {
         $user = new User();
 
         $user->setEmail($email);
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
+        $user->setCity($city);
 
         $violations = $this->validator->validate($user);
 
@@ -49,7 +51,7 @@ class UserService
 
     public function createManager(string $email, string $password): User
     {
-        $user = $this->createUserWithoutRole($email, $password);
+        $user = $this->createUserWithoutRole($email, $password, null);
         $user->setRoles([User::ROLE_MANAGER]);
 
         return $user;

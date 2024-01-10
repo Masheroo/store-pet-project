@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
+use App\Entity\Discount\UserDiscount;
 use App\Exceptions\LackOfBalanceException;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -17,7 +20,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const ROLES = [
         'admin' => self::ROLE_ADMIN,
         'manager' => self::ROLE_MANAGER,
-        'user' => self::ROLE_USER
+        'user' => self::ROLE_USER,
     ];
     public const ROLE_ADMIN = 'ROLE_ADMIN';
     /** @var string */
@@ -46,6 +49,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private float $balance = 0;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?City $city = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserDiscount::class)]
+    private Collection $userDiscounts;
+
+    public function __construct()
+    {
+        $this->userDiscounts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -112,7 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        // If you store any temporary, sensitive dat    a on the user, clear it here
         // $this->plainPassword = null;
     }
 
@@ -135,5 +150,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             throw new LackOfBalanceException();
         }
         $this->balance -= $amount;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserDiscount>
+     */
+    public function getDiscounts(): Collection
+    {
+        return $this->userDiscounts;
     }
 }

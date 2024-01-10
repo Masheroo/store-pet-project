@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\CityRepository;
 use App\Repository\UserRepository;
 use App\Request\RegistrationRequest;
 use App\Service\UserService;
@@ -19,9 +20,11 @@ class AuthController extends AbstractController
         #[MapRequestPayload] RegistrationRequest $request,
         UserService $userService,
         UserRepository $userRepository,
+        CityRepository $cityRepository,
         AuthenticationSuccessHandler $successHandler
     ): Response {
-        $user = $userService->createUser($request->email, $request->password);
+        $city = $cityRepository->find($request->city);
+        $user = $userService->createUser($request->email, $request->password, $city);
 
         $userRepository->persistAndFlush($user);
 
