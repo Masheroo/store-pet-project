@@ -9,6 +9,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
+use League\Flysystem\FilesystemException;
 
 class LotFixture extends Fixture
 {
@@ -30,14 +31,16 @@ class LotFixture extends Fixture
         $manager->flush();
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function createLotHelpsFaker(Generator $faker): Lot
     {
-        $lot = new Lot();
-        $lot->setTitle($faker->company().', '.$faker->firstNameFemale().' '.$faker->randomDigitNotZero());
-        $lot->setCost($faker->randomFloat(nbMaxDecimals: 2, min: 0, max: 10000000));
-        $lot->setCount($faker->randomDigitNotZero());
-        $lot->setImage($this->imageManager->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'));
-
-        return $lot;
+        return new Lot(
+            $faker->company().', '.$faker->firstNameFemale().' '.$faker->randomDigitNotZero(),
+            $faker->randomFloat(nbMaxDecimals: 2, min: 0, max: 10000000),
+            $faker->randomDigitNotZero(),
+            $this->imageManager->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png')
+        );
     }
 }

@@ -3,23 +3,26 @@
 namespace App\Controller;
 
 use App\Entity\Lot;
+use App\Entity\Order;
+use App\Entity\User;
 use App\Message\NewLotEmailMessage;
-use App\Notifier\EmailNotifier;
 use App\Repository\LotRepository;
 use App\Repository\UserRepository;
+use App\Request\BuyLotRequest;
 use App\Request\CreateLotRequest;
 use App\Request\UpdateLotRequest;
 use App\Service\Lot\LotService;
 use App\Service\Manager\LocalImageManager;
 use App\Service\Resolver\RequestPayloadValueResolver;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\VarExporter\Exception\NotInstantiableTypeException;
 
 #[Route('/api')]
 class LotController extends AbstractController
@@ -53,14 +56,16 @@ class LotController extends AbstractController
 
         $users = $userRepository->findAll();
         foreach ($users as $user) {
-            $messageBus->dispatch(new NewLotEmailMessage(
-                $lot->getId(),
-                $lot->getTitle(),
-                $lot->getCount(),
-                $lot->getCost(),
-                $imageManager->getPublicLink($lot->getImage()),
-                $user->getEmail()
-            ));
+            $messageBus->dispatch(
+                new NewLotEmailMessage(
+                    $lot->getId(),
+                    $lot->getTitle(),
+                    $lot->getCount(),
+                    $lot->getCost(),
+                    $imageManager->getPublicLink($lot->getImage()),
+                    $user->getEmail()
+                )
+            );
         }
 
         return $this->json($lot);
@@ -84,10 +89,36 @@ class LotController extends AbstractController
         #[MapRequestPayload(resolver: RequestPayloadValueResolver::class)]
         UpdateLotRequest $request,
         Lot $lot,
-        LotService $lotService): JsonResponse
-    {
+        LotService $lotService
+    ): JsonResponse {
         $updatedLot = $lotService->updateLotFromRequest($lot, $request);
 
         return $this->json($updatedLot);
+    }
+
+    /**
+     * @throws NotInstantiableTypeException
+     */
+    #[Route('/lot/buy/{id}', name: 'buy_lot', methods: ['POST'])]
+    public function buyLot(
+        Lot $lot,
+        #[MapRequestPayload] BuyLotRequest $request,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw new NotInstantiableTypeException(gettype($user));
+        }
+
+        $order = new Order($user, $request->quantity, 0, $lot);
+
+        $user->payOrder($order);
+        $lot->setCount($lot->getCount() - $order->getQuantity());
+
+        $entityManager->persist($order);
+        $entityManager->flush();
+
+        return $this->json('Lot has been purchased');
     }
 }

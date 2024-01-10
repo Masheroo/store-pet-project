@@ -9,12 +9,14 @@ use App\Entity\Discount\VolumeDiscount;
 use App\Entity\Lot;
 use App\Entity\LotDiscount;
 use App\Entity\User;
+use App\Repository\VolumeDiscountRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class DiscountService
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly VolumeDiscountRepository $volumeDiscountRepository
     )
     {
     }

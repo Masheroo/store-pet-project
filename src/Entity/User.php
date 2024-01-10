@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Discount\UserDiscount;
 use App\Exceptions\LackOfBalanceException;
+use App\Exceptions\OutOfLotCountException;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -57,9 +58,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserDiscount::class)]
     private Collection $userDiscounts;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->userDiscounts = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -147,7 +152,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function subtractionFromBalance(float $amount): void
     {
         if ($this->balance < $amount) {
-            throw new LackOfBalanceException();
+            throw new LackOfBalanceException(sprintf('There is not enough balance to buy. Your balance: %s. Require: %s', $this->balance, $amount));
         }
         $this->balance -= $amount;
     }
@@ -164,11 +169,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, UserDiscount>
-     */
     public function getDiscounts(): Collection
     {
         return $this->userDiscounts;
+    }
+
+    /**
+     * @throws OutOfLotCountException
+     * @throws LackOfBalanceException
+     */
+    public function payOrder(Order $order): void
+    {
+        if ($order->getLot()->getCount() < $order->getQuantity()) {
+            throw new OutOfLotCountException('Quantity to purchase greater than lot count');
+        }
+
+        $totalCost = $order->getLot()->getCost() * $order->getQuantity();
+
+        $this->subtractionFromBalance($totalCost);
+
+        $this->addOrder($order);
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setUser($this);
+        }
+
+        return $this;
     }
 }
