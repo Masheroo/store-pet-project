@@ -11,10 +11,12 @@ use App\Repository\UserRepository;
 use App\Request\BuyLotRequest;
 use App\Request\CreateLotRequest;
 use App\Request\UpdateLotRequest;
+use App\Service\Discount\DiscountService;
 use App\Service\Lot\LotService;
 use App\Service\Manager\LocalImageManager;
 use App\Service\Resolver\RequestPayloadValueResolver;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -98,12 +100,14 @@ class LotController extends AbstractController
 
     /**
      * @throws NotInstantiableTypeException
+     * @throws NonUniqueResultException
      */
     #[Route('/lot/buy/{id}', name: 'buy_lot', methods: ['POST'])]
     public function buyLot(
         Lot $lot,
         #[MapRequestPayload] BuyLotRequest $request,
         EntityManagerInterface $entityManager,
+        DiscountService $discountService
     ): JsonResponse {
         $user = $this->getUser();
 
@@ -111,7 +115,11 @@ class LotController extends AbstractController
             throw new NotInstantiableTypeException(gettype($user));
         }
 
-        $order = new Order($user, $request->quantity, 0, $lot);
+        $discount = 0;
+        $discount += $discountService->computeUserDiscount($user);
+        $discount += $discountService->computeLotDiscount($lot, $request->quantity);
+
+        $order = new Order($user, $request->quantity, $discount, $lot);
 
         $user->payOrder($order);
         $lot->setCount($lot->getCount() - $order->getQuantity());

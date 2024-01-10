@@ -104,4 +104,13 @@ class City
 
         return $this;
     }
+
+    public function getTotalDiscount(): float
+    {
+        $totalDiscount = 0;
+        foreach ($this->getCityDiscounts() as $cityDiscount){
+            $totalDiscount += $cityDiscount->getDiscount() ?? 0;
+        }
+        return  $totalDiscount;
+    }
 }

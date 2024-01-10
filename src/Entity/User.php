@@ -208,4 +208,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function computeSumOfAllOrders(): float
+    {
+        $sum = 0;
+        foreach ($this->getOrders() as $order){
+            $sum += $order->getQuantity() * $order->getLot()->getCost();
+        }
+        return $sum;
+    }
+
+    public function computeSumOfAllUserDiscounts()
+    {
+        $totalDiscount = 0;
+        /** @var UserDiscount $discount */
+        foreach ($this->getDiscounts() as $discount){
+            $totalDiscount += $discount->getDiscount() ?? 0;
+        }
+        return $totalDiscount;
+    }
 }

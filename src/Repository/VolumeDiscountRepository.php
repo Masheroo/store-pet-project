@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Discount\VolumeDiscount;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,5 +20,22 @@ class VolumeDiscountRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, VolumeDiscount::class);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findBiggestDiscountGreaterThan(float $amount): ?VolumeDiscount
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder('discount')
+            ->where('discount.amount < :amount')
+            ->setParameter('amount', $amount)
+            ->orderBy('discount.discount', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+
+        $result = $query->setMaxResults(1)->getOneOrNullResult();
+
+        return $result instanceof VolumeDiscount ? $result : null;
     }
 }

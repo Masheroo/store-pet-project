@@ -11,6 +11,7 @@ use App\Entity\LotDiscount;
 use App\Entity\User;
 use App\Repository\VolumeDiscountRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 
 class DiscountService
 {
@@ -57,5 +58,30 @@ class DiscountService
         $this->persistAndFlush($lotDiscount);
 
         return $lotDiscount;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function computeUserDiscount(User $user): float
+    {
+        $totalUserVolume = $user->computeSumOfAllOrders();
+
+        $volumeDiscount = $this->volumeDiscountRepository->findBiggestDiscountGreaterThan($totalUserVolume)?->getDiscount() ?? 0;
+        $cityDiscount = $user->getCity()->getTotalDiscount();
+        $personalUserDiscount = $user->computeSumOfAllUserDiscounts();
+
+        return $volumeDiscount + $cityDiscount + $personalUserDiscount;
+    }
+
+    public function computeLotDiscount(Lot $lot, int $quantity): float
+    {
+        foreach ($lot->getLotDiscounts() as $discount) {
+            if ($discount->getCountOfPurchases() <= $quantity){
+                $totalDiscount = $discount->getDiscount();
+            }
+        }
+
+        return $totalDiscount ?? 0;
     }
 }
