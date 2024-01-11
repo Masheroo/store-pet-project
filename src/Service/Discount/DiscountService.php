@@ -2,14 +2,17 @@
 
 namespace App\Service\Discount;
 
+use App\Dto\Discount;
 use App\Entity\City;
 use App\Entity\Discount\CityDiscount;
 use App\Entity\Discount\UserDiscount;
 use App\Entity\Discount\VolumeDiscount;
 use App\Entity\Lot;
 use App\Entity\LotDiscount;
+use App\Entity\Order;
 use App\Entity\User;
 use App\Repository\VolumeDiscountRepository;
+use App\Type\DiscountType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 
@@ -44,9 +47,9 @@ class DiscountService
         return $cityDiscount;
     }
 
-    public function createUserDiscount(User $user, float $discount): UserDiscount
+    public function createUserDiscount(User $user, float $discount, DiscountType $type): UserDiscount
     {
-        $userDiscount = new UserDiscount($user, $discount);
+        $userDiscount = new UserDiscount($user, $discount, $type);
         $this->persistAndFlush($userDiscount);
 
         return $userDiscount;
@@ -63,25 +66,77 @@ class DiscountService
     /**
      * @throws NonUniqueResultException
      */
-    public function computeUserDiscount(User $user): float
+    public function computeCityDiscount(User $user): Discount
     {
-        $totalUserVolume = $user->computeSumOfAllOrders();
+        $totalDiscount = new Discount(0, 0);
+        $totalDiscount->percentDiscount = $user->getCity()?->getTotalDiscount() ?? 0;
 
-        $volumeDiscount = $this->volumeDiscountRepository->findBiggestDiscountGreaterThan($totalUserVolume)?->getDiscount() ?? 0;
-        $cityDiscount = $user->getCity()->getTotalDiscount();
-        $personalUserDiscount = $user->computeSumOfAllUserDiscounts();
-
-        return $volumeDiscount + $cityDiscount + $personalUserDiscount;
+        return $totalDiscount;
     }
 
-    public function computeLotDiscount(Lot $lot, int $quantity): float
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function computeVolumeDiscount(User $user): Discount
     {
-        foreach ($lot->getLotDiscounts() as $discount) {
-            if ($discount->getCountOfPurchases() <= $quantity){
-                $totalDiscount = $discount->getDiscount();
+        $totalDiscount = new Discount(0, 0);
+
+        $totalUserVolume = $user->computeSumOfAllOrders();
+        $totalDiscount->percentDiscount = $this->volumeDiscountRepository->findBiggestDiscountByAmount($totalUserVolume)?->getDiscount() ?? 0;
+
+        return $totalDiscount;
+    }
+
+    public function computePersonalUserDiscount(User $user): Discount
+    {
+        $personalUserDiscounts = $user->getDiscounts();
+        $totalDiscount = new Discount(0, 0);
+
+        /** @var UserDiscount $discount */
+        foreach ($personalUserDiscounts as $discount) {
+            switch ($discount->getType()) {
+                case DiscountType::Absolute:
+                    $totalDiscount->absoluteDiscount += $discount->getDiscount() ?? 0;
+                    break;
+                case DiscountType::Percent:
+                    $totalDiscount->percentDiscount += $discount->getDiscount() ?? 0;
+                    break;
             }
         }
 
-        return $totalDiscount ?? 0;
+        return $totalDiscount;
+    }
+
+    public function computeLotDiscount(Lot $lot, int $quantity): Discount
+    {
+        $totalDiscount = new Discount(0, 0);
+
+        foreach ($lot->getLotDiscounts() as $discount) {
+            if ($discount->getCountOfPurchases() <= $quantity) {
+                $totalDiscount->percentDiscount = $discount->getDiscount();
+            }
+        }
+
+        return $totalDiscount;
+    }
+
+    /**
+     * @param Order $order
+     * @return Discount
+     * @throws NonUniqueResultException
+     */
+    public function computeFullDiscountByOrder(Order $order): Discount
+    {
+        return (new Discount(0, 0))
+            ->increase($this->computeVolumeDiscount($order->getUser()))
+            ->increase($this->computePersonalUserDiscount($order->getUser()))
+            ->increase($this->computeLotDiscount($order->getLot(), $order->getQuantity()))
+            ->increase($this->computeCityDiscount($order->getUser()));
+
+    }
+
+    public function calculateDiscount(float $cost, Discount $discount): float
+    {
+        return $discount->absoluteDiscount + $cost * $discount->percentDiscount;
     }
 }

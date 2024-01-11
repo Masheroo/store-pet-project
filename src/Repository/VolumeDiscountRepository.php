@@ -25,9 +25,9 @@ class VolumeDiscountRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
-    public function findBiggestDiscountGreaterThan(float $amount): ?VolumeDiscount
+    public function findBiggestDiscountByAmount(float $amount): ?VolumeDiscount
     {
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder('discount')
+        $queryBuilder = $this->createQueryBuilder('discount')
             ->where('discount.amount < :amount')
             ->setParameter('amount', $amount)
             ->orderBy('discount.discount', 'DESC');

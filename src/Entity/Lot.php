@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Exceptions\LotCountException;
 use App\Repository\LotRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -99,32 +100,13 @@ class Lot
     }
 
     /**
-     * @return Collection<int, Order>
+     * @throws LotCountException
      */
-    public function getOrders(): Collection
+    public function decreaseCount(int $countToDecrease): void
     {
-        return $this->orders;
-    }
-
-    public function addOrder(Order $order): static
-    {
-        if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
-            $order->setLot($this);
+        if ($countToDecrease > $this->count) {
+            throw new LotCountException('Quantity to decrease more than count in lot.');
         }
-
-        return $this;
-    }
-
-    public function removeOrder(Order $order): static
-    {
-        if ($this->orders->removeElement($order)) {
-            // set the owning side to null (unless already changed)
-            if ($order->getLot() === $this) {
-                $order->setLot(null);
-            }
-        }
-
-        return $this;
+        $this->count -= $countToDecrease;
     }
 }

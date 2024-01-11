@@ -7,6 +7,7 @@ use App\Entity\Lot;
 use App\Entity\User;
 use App\Request\Discount\CreateDiscountRequest;
 use App\Request\Discount\CreateLotDiscountRequest;
+use App\Request\Discount\CreateUserDiscountRequest;
 use App\Request\Discount\CreateVolumeDiscountRequest;
 use App\Service\Discount\DiscountService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,10 +42,10 @@ class DiscountController extends AbstractController
     #[Route('/user/{id}', name: 'create_user_discount', methods: 'POST')]
     public function createUserDiscount(
         User $user,
-        #[MapRequestPayload] CreateDiscountRequest $request,
+        #[MapRequestPayload] CreateUserDiscountRequest $request,
         DiscountService $discountService
     ): JsonResponse {
-        return $this->json($discountService->createUserDiscount($user, $request->discount));
+        return $this->json($discountService->createUserDiscount($user, $request->discount, $request->type));
     }
 
     #[Route('/lot/{id}', name: 'create_lot_discount', methods: 'POST')]

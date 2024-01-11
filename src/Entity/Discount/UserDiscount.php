@@ -4,6 +4,7 @@ namespace App\Entity\Discount;
 
 use App\Entity\User;
 use App\Repository\UserDiscountRepository;
+use App\Type\DiscountType;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserDiscountRepository::class)]
@@ -18,9 +19,21 @@ class UserDiscount
         #[ORM\ManyToOne(inversedBy: 'userDiscounts')]
         private User $user,
         #[ORM\Column]
-        private float $discount
+        private float $discount,
+        #[ORM\Column(type: 'integer', enumType: DiscountType::class)]
+        private DiscountType $type
     )
     {
+    }
+
+    public function getType(): DiscountType
+    {
+        return $this->type;
+    }
+
+    public function setType(DiscountType $type): void
+    {
+        $this->type = $type;
     }
 
     public function getId(): ?int

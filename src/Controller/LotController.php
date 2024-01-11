@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Lot;
 use App\Entity\Order;
 use App\Entity\User;
+use App\Exceptions\LotCountException;
 use App\Message\NewLotEmailMessage;
 use App\Repository\LotRepository;
 use App\Repository\UserRepository;
@@ -19,8 +20,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -101,31 +105,43 @@ class LotController extends AbstractController
     /**
      * @throws NotInstantiableTypeException
      * @throws NonUniqueResultException
+     * @throws LotCountException
      */
-    #[Route('/lot/buy/{id}', name: 'buy_lot', methods: ['POST'])]
+    #[Route('/lot/buy/{lotId}', name: 'buy_lot', methods: ['POST'])]
     public function buyLot(
-        Lot $lot,
+        int $lotId,
         #[MapRequestPayload] BuyLotRequest $request,
         EntityManagerInterface $entityManager,
-        DiscountService $discountService
+        DiscountService $discountService,
+        LotRepository $lotRepository,
+        LockFactory $factory
     ): JsonResponse {
-        $user = $this->getUser();
+        $lock = $factory->createLock('buy-lot-'.$lotId);
+        $lock->acquire(true);
 
-        if (!$user instanceof User) {
-            throw new NotInstantiableTypeException(gettype($user));
+        try {
+            $user = $this->getUser();
+
+            if (!$user instanceof User) {
+                throw new UnexpectedTypeException(gettype($user), User::class);
+            }
+
+            $lot = $lotRepository->find($lotId) ?? throw new NotFoundHttpException(sprintf('Lot with id = %s not found', $lotId));
+
+            $order = new Order($user, $lot, $request->quantity);
+
+            $discount = $discountService->computeFullDiscountByOrder($order);
+            $order->setDiscount($discountService->calculateDiscount($order->getFullPrice(), $discount));
+
+            $user->payOrder($order);
+            $lot->decreaseCount($order->getQuantity());
+
+            $entityManager->persist($order);
+            sleep(5);
+            $entityManager->flush();
+        } finally {
+            $lock->release();
         }
-
-        $discount = 0;
-        $discount += $discountService->computeUserDiscount($user);
-        $discount += $discountService->computeLotDiscount($lot, $request->quantity);
-
-        $order = new Order($user, $request->quantity, $discount, $lot);
-
-        $user->payOrder($order);
-        $lot->setCount($lot->getCount() - $order->getQuantity());
-
-        $entityManager->persist($order);
-        $entityManager->flush();
 
         return $this->json('Lot has been purchased');
     }
