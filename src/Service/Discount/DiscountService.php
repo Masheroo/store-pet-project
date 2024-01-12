@@ -75,7 +75,7 @@ class DiscountService
 
         /** @var DiscountServiceInterface $discountService */
         foreach ($this->discountServices as $discountService) {
-            $discounts = array_merge($discountService->computeDiscount($order), $discounts);
+            $discounts = [...$discounts, ...$discountService->computeDiscount($order)];
         }
 
         return $discounts;
