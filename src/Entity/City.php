@@ -24,7 +24,7 @@ class City
         private ?string $name = null,
 
         #[ORM\OneToMany(mappedBy: 'city', targetEntity: User::class)]
-        private readonly Collection $users = new ArrayCollection()
+        private Collection $users = new ArrayCollection()
     ) {
         $this->cityDiscounts = new ArrayCollection();
     }

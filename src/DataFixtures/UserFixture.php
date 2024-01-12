@@ -36,16 +36,22 @@ class UserFixture extends Fixture
 
     private function createAndPersistUser(string $email, string $password): void
     {
-        $this->userRepository->persist($this->userService->createUser($email, $password, null));
+        $user = $this->userService->createUser($email, $password, null);
+        $user->replenishBalance(100000000);
+        $this->userRepository->persist($user);
     }
 
     private function createAndPersistAdmin(string $email, string $password): void
     {
-        $this->userRepository->persist($this->userService->createAdmin($email, $password));
+        $user = $this->userService->createAdmin($email, $password);
+        $user->replenishBalance(100000000);
+        $this->userRepository->persist($user);
     }
 
     private function createAndPersistManager(string $email, string $password): void
     {
-        $this->userRepository->persist($this->userService->createManager($email, $password, null));
+        $user = $this->userService->createManager($email, $password);
+        $user->replenishBalance(100000000);
+        $this->userRepository->persist($user);
     }
 }
