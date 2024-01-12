@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Discount\LotDiscount;
 use App\Exceptions\LotCountException;
 use App\Repository\LotRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -89,14 +90,6 @@ class Lot
         $this->image = $image;
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, LotDiscount>
-     */
-    public function getLotDiscounts(): Collection
-    {
-        return $this->lotDiscounts;
     }
 
     /**

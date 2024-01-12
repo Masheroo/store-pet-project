@@ -53,7 +53,7 @@ class UserDiscount
         return $this;
     }
 
-    public function getDiscount(): ?float
+    public function getDiscount(): float
     {
         return $this->discount;
     }

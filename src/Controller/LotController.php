@@ -13,6 +13,7 @@ use App\Request\BuyLotRequest;
 use App\Request\CreateLotRequest;
 use App\Request\UpdateLotRequest;
 use App\Service\Discount\DiscountService;
+use App\Service\Discount\DiscountServiceInterface;
 use App\Service\Lot\LotService;
 use App\Service\Manager\LocalImageManager;
 use App\Service\Resolver\RequestPayloadValueResolver;
@@ -20,6 +21,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -130,19 +132,17 @@ class LotController extends AbstractController
 
             $order = new Order($user, $lot, $request->quantity);
 
-            $discount = $discountService->computeFullDiscountByOrder($order);
-            $order->setDiscount($discountService->calculateDiscount($order->getFullPrice(), $discount));
+            $order->setDiscounts($discountService->computeAllDiscountsForOrder($order));
 
             $user->payOrder($order);
             $lot->decreaseCount($order->getQuantity());
 
             $entityManager->persist($order);
-            sleep(5);
             $entityManager->flush();
         } finally {
             $lock->release();
         }
 
-        return $this->json('Lot has been purchased');
+        return $this->json($order);
     }
 }

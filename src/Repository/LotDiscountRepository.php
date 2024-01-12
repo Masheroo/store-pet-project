@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\LotDiscount;
+use App\Entity\Discount\LotDiscount;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

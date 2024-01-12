@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Discount;
 
+use App\Entity\Lot;
 use App\Repository\LotDiscountRepository;
 use Doctrine\ORM\Mapping as ORM;
 
