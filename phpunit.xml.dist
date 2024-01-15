@@ -17,7 +17,18 @@
         <env name="KERNEL_CLASS" value="App\Kernel"/>
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
     </php>
-
+    <coverage cacheDirectory="tests/coverage/cache">
+        <report>
+            <html outputDirectory="tests/coverage"/>
+            <clover outputFile="tests/coverage/clover.xml"/>
+            <crap4j outputFile="tests/coverage/crap4j.xml"/>
+        </report>
+    </coverage>
+    <source>
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
     <testsuites>
         <testsuite name="Project Test Suite">
             <directory>tests</directory>
