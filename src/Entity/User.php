@@ -149,7 +149,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @throws LackOfBalanceException
      */
-    public function subtractionFromBalance(float $amount): void
+    private function subtractionFromBalance(float $amount): void
     {
         if ($this->balance < $amount) {
             throw new LackOfBalanceException(sprintf('There is not enough balance to buy. Your balance: %s. Require: %s', $this->balance, $amount));
@@ -184,28 +184,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             throw new OutOfLotCountException('Quantity to purchase greater than lot count');
         }
 
-        $totalCost = $order->getLot()->getCost() * $order->getQuantity();
-
-        $this->subtractionFromBalance($totalCost);
-
-        $this->addOrder($order);
-    }
-
-    /**
-     * @return Collection<int, Order>
-     */
-    public function getOrders(): Collection
-    {
-        return $this->orders;
-    }
-
-    public function addOrder(Order $order): static
-    {
-        if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
-            $order->setUser($this);
-        }
-
-        return $this;
+        $this->subtractionFromBalance($order->getPayPrice());
     }
 }

@@ -16,9 +16,9 @@ class UserService
     ) {
     }
 
-    public function createAdmin(?string $email, string $password): User
+    public function createAdmin(string $email, string $password, ?City $city): User
     {
-        $admin = $this->createUserWithoutRole($email, $password, null);
+        $admin = $this->createUserWithoutRole($email, $password, $city);
         $admin->setRoles([User::ROLE_ADMIN]);
 
         return $admin;
@@ -49,9 +49,9 @@ class UserService
         return $user;
     }
 
-    public function createManager(string $email, string $password): User
+    public function createManager(string $email, string $password, City $city): User
     {
-        $user = $this->createUserWithoutRole($email, $password, null);
+        $user = $this->createUserWithoutRole($email, $password, $city);
         $user->setRoles([User::ROLE_MANAGER]);
 
         return $user;

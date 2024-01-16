@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Dto\Discount;
 use App\Repository\OrderRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,16 +15,27 @@ class Order
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column]
+    private float $fullPrice;
+    #[ORM\Column]
+    private float $lotCost;
+
+    #[ORM\Column(type: 'json')]
+    private array $discountList = [];
+
+    #[ORM\Column]
+    private float $discount = 0;
+
     public function __construct(
         #[ORM\ManyToOne(inversedBy: 'orders')]
         private User $user,
+        #[ORM\ManyToOne(inversedBy: 'orders')]
+        private Lot $lot,
         #[ORM\Column]
         private int $quantity,
-        #[ORM\Column]
-        private float $discount,
-        #[ORM\ManyToOne(inversedBy: 'orders')]
-        private Lot $lot
     ) {
+        $this->fullPrice = $this->lot->getCost() * $this->quantity;
+        $this->lotCost = $this->lot->getCost();
     }
 
     public function getId(): ?int
@@ -31,7 +43,7 @@ class Order
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
@@ -60,9 +72,29 @@ class Order
         return $this->discount;
     }
 
-    public function setDiscount(float $discount): static
+    /**
+     * @return array
+     */
+    public function getDiscountList(): array
     {
-        $this->discount = $discount;
+        return $this->discountList;
+    }
+
+    /**
+     * @param Discount[] $discounts
+     * @return Order
+     */
+    public function setDiscounts(array $discounts): static
+    {
+        $this->discountList = $discounts;
+
+        $totalDiscountValue = 0;
+
+        foreach ($discounts as $discount){
+            $totalDiscountValue += $discount->discount;
+        }
+
+        $this->discount = round($totalDiscountValue, 2);
 
         return $this;
     }
@@ -77,5 +109,20 @@ class Order
         $this->lot = $lot;
 
         return $this;
+    }
+
+    public function getFullPrice(): float
+    {
+        return $this->fullPrice;
+    }
+
+    public function getPayPrice(): float
+    {
+        return $this->fullPrice - $this->discount;
+    }
+
+    public function getLotCost(): float
+    {
+        return $this->lotCost;
     }
 }

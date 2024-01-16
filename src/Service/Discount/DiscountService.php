@@ -1,24 +1,30 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service\Discount;
 
+use App\Dto\Discount;
 use App\Entity\City;
 use App\Entity\Discount\CityDiscount;
+use App\Entity\Discount\LotDiscount;
 use App\Entity\Discount\UserDiscount;
 use App\Entity\Discount\VolumeDiscount;
 use App\Entity\Lot;
-use App\Entity\LotDiscount;
+use App\Entity\Order;
 use App\Entity\User;
 use App\Repository\VolumeDiscountRepository;
+use App\Type\DiscountType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 
 class DiscountService
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly VolumeDiscountRepository $volumeDiscountRepository
-    )
-    {
+        private readonly VolumeDiscountRepository $volumeDiscountRepository,
+        #[TaggedIterator('app.discount_services')]
+        private readonly iterable $discountServices,
+    ) {
     }
 
     private function persistAndFlush(object $entity): void
@@ -43,9 +49,9 @@ class DiscountService
         return $cityDiscount;
     }
 
-    public function createUserDiscount(User $user, float $discount): UserDiscount
+    public function createUserDiscount(User $user, float $discount, DiscountType $type): UserDiscount
     {
-        $userDiscount = new UserDiscount($user, $discount);
+        $userDiscount = new UserDiscount($user, $discount, $type);
         $this->persistAndFlush($userDiscount);
 
         return $userDiscount;
@@ -57,5 +63,21 @@ class DiscountService
         $this->persistAndFlush($lotDiscount);
 
         return $lotDiscount;
+    }
+
+    /**
+     * @param Order $order
+     * @return Discount[]
+     */
+    public function computeAllDiscountsForOrder(Order $order): array
+    {
+        $discounts = [];
+
+        /** @var DiscountServiceInterface $discountService */
+        foreach ($this->discountServices as $discountService) {
+            $discounts = [...$discounts, ...$discountService->computeDiscount($order)];
+        }
+
+        return $discounts;
     }
 }

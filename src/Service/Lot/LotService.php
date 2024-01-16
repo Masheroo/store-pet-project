@@ -23,7 +23,6 @@ class LotService
     public function createLotFromRequest(CreateLotRequest $request): Lot
     {
         $lot = new Lot(
-            null,
             $request->title,
             $request->cost,
             $request->count,

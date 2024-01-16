@@ -17,10 +17,10 @@ class CityDiscount
     public function __construct(
         #[ORM\ManyToOne(inversedBy: 'cityDiscounts')]
         #[ORM\JoinColumn(nullable: false)]
-        private City $City,
+        private readonly City $city,
 
         #[ORM\Column]
-        private float $discount
+        private readonly float $discount
     )
     {
     }
@@ -30,27 +30,8 @@ class CityDiscount
         return $this->id;
     }
 
-    public function getCity(): ?City
-    {
-        return $this->City;
-    }
-
-    public function setCity(?City $City): static
-    {
-        $this->City = $City;
-
-        return $this;
-    }
-
     public function getDiscount(): ?float
     {
         return $this->discount;
-    }
-
-    public function setDiscount(float $discount): static
-    {
-        $this->discount = $discount;
-
-        return $this;
     }
 }

@@ -14,7 +14,7 @@ class CityService
 
     public function create(string $name): City
     {
-        $city = new City(null, $name);
+        $city = new City($name);
         $this->repository->persist($city);
         return $city;
     }
