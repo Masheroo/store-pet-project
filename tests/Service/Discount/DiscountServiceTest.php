@@ -2,21 +2,20 @@
 
 namespace App\Tests\Service\Discount;
 
+use App\DataFixtures\DiscountFixtures;
 use App\DataFixtures\UserFixture;
 use App\Repository\CityDiscountRepository;
 use App\Repository\CityRepository;
 use App\Repository\LotDiscountRepository;
 use App\Repository\LotRepository;
+use App\Repository\OrderRepository;
 use App\Repository\UserDiscountRepository;
 use App\Repository\VolumeDiscountRepository;
 use App\Service\Discount\DiscountService;
-use App\Tests\Api\Lot\BuyLotTest;
 use App\Tests\Traits\UserGetterTrait;
 use App\Type\DiscountType;
 use Doctrine\ORM\NonUniqueResultException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Depends;
-use PHPUnit\Framework\Attributes\DependsOnClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -92,10 +91,28 @@ class DiscountServiceTest extends KernelTestCase
         assertEquals(1, $lotDiscount->getCountOfPurchases());
     }
 
-    #[DependsOnClass(BuyLotTest::class)]
     public function testComputeAllDiscountsForOrder(): void
     {
+        $user = $this->getUserByEmail(UserFixture::USER_EMAIL, $this->container);
 
+        /** @var OrderRepository $orderRepository */
+        $orderRepository = $this->container->get(OrderRepository::class);
+        $order = $orderRepository->findOneBy(['user' => $user]);
+
+        $discounts = $this->service->computeAllDiscountsForOrder($order);
+        $totalDiscountValue = 0;
+
+        foreach ($discounts as $discount) {
+            $totalDiscountValue += $discount->discount;
+        }
+
+        $expectedDiscount =
+            DiscountFixtures::VOLUME_DISCOUNT_VALUE * $order->getFullPrice() +
+            DiscountFixtures::PERCENT_USER_DISCOUNT_VALUE * $order->getFullPrice() +
+            DiscountFixtures::ABSOLUTE_USER_DISCOUNT_VALUE +
+            DiscountFixtures::CITY_DISCOUNT_VALUE * $order->getFullPrice();
+
+        assertEquals($expectedDiscount, $totalDiscountValue);
     }
 
     public static function provideDiscountTypeAndValue(): iterable

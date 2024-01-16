@@ -18,7 +18,7 @@ class BuyLotTest extends WebTestCase
 
         /** @var UserRepository $userRepository */
         $userRepository = $container->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => UserFixture::USER_EMAIL]);
+        $user = $userRepository->findOneBy(['email' => UserFixture::USER_WITHOUT_ORDER_EMAIL]);
         $userBalanceBeforeBuy = $user->getBalance();
 
         $client->loginUser($user);
@@ -38,6 +38,6 @@ class BuyLotTest extends WebTestCase
 
         self::assertNotNull($order);
         self::assertTrue($user->getBalance() < $userBalanceBeforeBuy);
-        self::assertTrue($user->getBalance() + $order->getFullPrice() - $order->getDiscount() == $userBalanceBeforeBuy);
+        self::assertTrue($user->getBalance() + $order->getPayPrice() == $userBalanceBeforeBuy);
     }
 }

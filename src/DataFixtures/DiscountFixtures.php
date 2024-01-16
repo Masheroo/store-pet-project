@@ -17,7 +17,6 @@ use Doctrine\Persistence\ObjectManager;
 
 class DiscountFixtures extends Fixture implements DependentFixtureInterface
 {
-
     public const VOLUME_DISCOUNT_AMOUNT = 100000;
     public const VOLUME_DISCOUNT_VALUE = .1;
     public const PERCENT_USER_DISCOUNT_VALUE = .1;
@@ -32,13 +31,12 @@ class DiscountFixtures extends Fixture implements DependentFixtureInterface
         $userRepository = $manager->getRepository(User::class);
         $user = $userRepository->findByEmail(UserFixture::USER_EMAIL);
 
-
         $volumeDiscount = new VolumeDiscount(self::VOLUME_DISCOUNT_AMOUNT, self::VOLUME_DISCOUNT_VALUE);
         $manager->persist($volumeDiscount);
 
         $percentUserDiscount = new UserDiscount($user, self::PERCENT_USER_DISCOUNT_VALUE, DiscountType::Percent);
         $manager->persist($percentUserDiscount);
-        $absoluteUserDiscount = new UserDiscount($user, self::ABSOLUTE_USER_DISCOUNT_VALUE, DiscountType::Percent);
+        $absoluteUserDiscount = new UserDiscount($user, self::ABSOLUTE_USER_DISCOUNT_VALUE, DiscountType::Absolute);
         $manager->persist($absoluteUserDiscount);
 
         $city = $manager->getRepository(City::class)->findAll()[0];
@@ -47,7 +45,7 @@ class DiscountFixtures extends Fixture implements DependentFixtureInterface
 
         $lotRepository = $manager->getRepository(Lot::class);
         $lot = $lotRepository->findAll()[2];
-        $lotDiscount = new LotDiscount(self::LOT_DISCOUNT_COUNT_OF_PURCHASES,  $lot, self::LOT_DISCOUNT_DISCOUNT_VALUE);
+        $lotDiscount = new LotDiscount(self::LOT_DISCOUNT_COUNT_OF_PURCHASES, $lot, self::LOT_DISCOUNT_DISCOUNT_VALUE);
         $manager->persist($lotDiscount);
 
         $manager->flush();
@@ -58,7 +56,7 @@ class DiscountFixtures extends Fixture implements DependentFixtureInterface
         return [
             UserFixture::class,
             CityFixtures::class,
-            LotFixture::class
+            LotFixture::class,
         ];
     }
 }

@@ -25,7 +25,7 @@ class CityDiscountService implements DiscountServiceInterface
             $discounts[] = new Discount(
                 self::DISCOUNT_NAME,
                 DiscountType::Percent,
-                $cityDiscount->getDiscount() ?? 0 * $order->getFullPrice(),
+                ($cityDiscount->getDiscount() ?? 0) * $order->getFullPrice(),
             );
         }
 
