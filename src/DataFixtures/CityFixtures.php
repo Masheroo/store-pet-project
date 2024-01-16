@@ -14,14 +14,9 @@ class CityFixtures extends Fixture
     ) {
     }
 
-    public const CITY_COUNT = 10;
-
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create();
-        for ($i = 0; $i < self::CITY_COUNT; ++$i) {
-            $this->cityService->create($faker->city());
-        }
+        $this->cityService->create(Factory::create()->city());
         $manager->flush();
     }
 }

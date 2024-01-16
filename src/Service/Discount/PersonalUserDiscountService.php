@@ -22,11 +22,11 @@ class PersonalUserDiscountService implements DiscountServiceInterface
         foreach ($personalUserDiscounts as $discount) {
             $discounts[] = new Discount(
                 self::DISCOUNT_NAME,
+                $discount->getType(),
                 match ($discount->getType()) {
                     DiscountType::Percent => $discount->getDiscount() * $order->getFullPrice(),
                     DiscountType::Absolute => $discount->getDiscount(),
                 },
-                ['value_type' => $discount->getType()->name, 'value' => $discount->getDiscount()]
             );
         }
 

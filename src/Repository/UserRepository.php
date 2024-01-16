@@ -55,4 +55,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $this->getEntityManager()->flush();
     }
+
+    public function findByEmail(string $email): User
+    {
+        return $this->findOneBy(['email' => $email]) ?? throw new \DomainException(sprintf('User with this email(%s) not found', $email));
+    }
 }

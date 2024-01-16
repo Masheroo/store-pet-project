@@ -35,8 +35,8 @@ class LotDiscountService implements DiscountServiceInterface
         if (isset($lotDiscount)) {
             $totalDiscount[0] = new Discount(
                 self::DISCOUNT_NAME,
+                DiscountType::Percent,
                 $lotDiscount->getDiscount() * $order->getFullPrice(),
-                ['value_type' => DiscountType::Percent->name, 'value' => $lotDiscount->getDiscount()]
             );
         }
 

@@ -38,7 +38,6 @@ class BuyLotTest extends WebTestCase
 
         self::assertNotNull($order);
         self::assertTrue($user->getBalance() < $userBalanceBeforeBuy);
-        self::assertTrue($user->getBalance() + $lot->getCost() == $userBalanceBeforeBuy);
+        self::assertTrue($user->getBalance() + $order->getFullPrice() - $order->getDiscount() == $userBalanceBeforeBuy);
     }
-
 }

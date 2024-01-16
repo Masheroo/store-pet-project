@@ -40,8 +40,8 @@ class VolumeDiscountService implements DiscountServiceInterface
         if ($volumeDiscount) {
             $discount[0] = new Discount(
                 self::DISCOUNT_NAME,
+                DiscountType::Percent,
                 $volumeDiscount->getDiscount() * $order->getFullPrice(),
-                ['value_type' => DiscountType::Percent->name, 'value' => $volumeDiscount->getDiscount()]
             );
         }
 

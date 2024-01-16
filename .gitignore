@@ -27,3 +27,4 @@
 /.phpunit.cache/test-results
 /public/uploads/
 /tests/project-files/public/uploads/
+/tests/coverage

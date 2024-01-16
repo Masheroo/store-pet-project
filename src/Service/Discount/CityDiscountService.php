@@ -24,8 +24,8 @@ class CityDiscountService implements DiscountServiceInterface
         foreach ($cityDiscounts as $cityDiscount) {
             $discounts[] = new Discount(
                 self::DISCOUNT_NAME,
+                DiscountType::Percent,
                 $cityDiscount->getDiscount() ?? 0 * $order->getFullPrice(),
-                ['value_type' => DiscountType::Percent->name, 'value' => $cityDiscount->getDiscount()]
             );
         }
 
