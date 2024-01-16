@@ -15,18 +15,10 @@ class City
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\OneToMany(mappedBy: 'City', targetEntity: CityDiscount::class)]
-    private Collection $cityDiscounts;
-
     public function __construct(
         #[ORM\Column(length: 255)]
-        private ?string $name = null,
-
-        #[ORM\OneToMany(mappedBy: 'city', targetEntity: User::class)]
-        private Collection $users = new ArrayCollection()
+        private string $name,
     ) {
-        $this->cityDiscounts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -34,7 +26,7 @@ class City
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -42,17 +34,6 @@ class City
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        if ($this->users->removeElement($user)) {
-            if ($user->getCity() === $this) {
-                $user->setCity(null);
-            }
-        }
 
         return $this;
     }
