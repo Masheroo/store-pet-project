@@ -19,7 +19,7 @@ class DiscountControllerTest extends WebTestCase
     use ClientHelperTrait;
     use UserGetterTrait;
 
-    /** @covers DiscountController::createVolumeDiscount */
+    /** @covers \App\Controller\DiscountController::createVolumeDiscount */
     public function testCreateVolumeDiscount(): void
     {
         $client = self::createClient();
@@ -42,7 +42,7 @@ class DiscountControllerTest extends WebTestCase
         self::assertEquals(.01, $response['discount']);
     }
 
-    /** @covers DiscountController::createCityDiscount() */
+    /** @covers \App\Controller\DiscountController::createCityDiscount */
     public function testCreateCityDiscount(): void
     {
         $client = self::createClient();
@@ -67,7 +67,7 @@ class DiscountControllerTest extends WebTestCase
         self::assertEquals($city->getId(), $response['city']['id']);
     }
 
-    /** @covers DiscountController::createLotDiscount() */
+    /** @covers \App\Controller\DiscountController::createLotDiscount */
     public function testCreateLotDiscount(): void
     {
         $client = self::createClient();
@@ -96,7 +96,7 @@ class DiscountControllerTest extends WebTestCase
         self::assertEquals($lot->getId(), $response['lot']['id']);
     }
 
-    /** @covers DiscountController::createUserDiscount() */
+    /** @covers \App\Controller\DiscountController::createUserDiscount */
     #[DataProvider('provideUserDiscountTypeAndDiscountValues')]
     public function testCreateUserDiscount(float $discount, int $type): void
     {

@@ -40,7 +40,7 @@ class UserController extends AbstractController
      */
     #[IsGranted(User::ROLE_ADMIN)]
     #[Route('/user/{id}/role/{role}', name: 'switch_user_to_admin', methods: ['POST'])]
-    public function switchUserToAdmin(User $user, string $role, UserRepository $userRepository): JsonResponse
+    public function switchUserRole(User $user, string $role, UserRepository $userRepository): JsonResponse
     {
         if (!array_key_exists($role, User::ROLES)) {
             throw new RoleDoesNotExistsException(sprintf('Role %s does not exists. Available roles: %s', $role, implode(', ', array_keys(User::ROLES))));
