@@ -34,4 +34,9 @@ class CityDiscount
     {
         return $this->discount;
     }
+
+    public function getCity(): City
+    {
+        return $this->city;
+    }
 }

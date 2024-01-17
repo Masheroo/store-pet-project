@@ -27,4 +27,13 @@ trait ClientHelperTrait
 
         return $client->loginUser($user);
     }
+    public function getLoginByAdminClient(KernelBrowser $client, ContainerInterface $container): KernelBrowser
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => UserFixture::ADMIN_EMAIL]);
+        assert($user != null);
+
+        return $client->loginUser($user);
+    }
 }
