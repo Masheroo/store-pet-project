@@ -8,7 +8,7 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class LocalImageManager implements ImageManagerInterface
+class LocalImageManager
 {
     public function __construct(
         private readonly FilesystemOperator $defaultStorage,
@@ -25,10 +25,10 @@ class LocalImageManager implements ImageManagerInterface
 
         return $newFilename;
     }
+
     /**
      * Returns saved filename.
-     * @param string $pathToFile
-     * @return string
+     *
      * @throws FilesystemException
      */
     public function save(string $pathToFile): string
@@ -36,6 +36,7 @@ class LocalImageManager implements ImageManagerInterface
         $file = new File($pathToFile, true);
         $newFilename = uniqid().'.'.$file->getExtension();
         $this->defaultStorage->write($newFilename, $file->getContent());
+
         return $newFilename;
     }
 
@@ -53,7 +54,7 @@ class LocalImageManager implements ImageManagerInterface
      */
     public function deleteIfExists(string $filename): void
     {
-        if (!$this->defaultStorage->fileExists($filename)){
+        if (!$this->defaultStorage->fileExists($filename)) {
             return;
         }
         $this->delete($filename);
@@ -69,7 +70,7 @@ class LocalImageManager implements ImageManagerInterface
 
     public function getPublicLink(string $filename): string
     {
-        if (!$this->defaultStorage->fileExists($filename)){
+        if (!$this->defaultStorage->fileExists($filename)) {
             throw new FileNotFoundException();
         }
 

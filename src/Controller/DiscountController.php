@@ -21,7 +21,7 @@ class DiscountController extends AbstractController
 {
     #[IsGranted(User::ROLE_ADMIN)]
     #[Route('/volume', name: 'create_volume_discount', methods: 'POST')]
-    public function index(
+    public function createVolumeDiscount(
         #[MapRequestPayload]
         CreateVolumeDiscountRequest $request,
         DiscountService $discountService
