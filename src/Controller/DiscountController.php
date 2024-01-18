@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted(User::ROLE_MANAGER)]
 #[Route('/api/discount')]
 class DiscountController extends AbstractController
 {
