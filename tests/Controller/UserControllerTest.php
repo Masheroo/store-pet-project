@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\DataFixtures\UserFixture;
 use App\Entity\User;
+use App\Repository\ExternalApiTokenRepository;
 use App\Repository\UserRepository;
 use App\Tests\Traits\ClientHelperTrait;
 use App\Tests\Traits\UserGetterTrait;
@@ -95,5 +96,28 @@ class UserControllerTest extends WebTestCase
         $client->request('post', 'api/user/'.$user->getId().'/role/test');
 
         self::assertResponseStatusCodeSame(400);
+    }
+
+    public function testTokenCreateSuccessful(): void
+    {
+        $client = self::createClient();
+        $container = self::getContainer();
+        $client = $this->getLoginByAdminClient($client, $container);
+
+        $client->request('post', 'api/token', [
+            'token_name' => 'test_token',
+        ]);
+
+        self::assertResponseIsSuccessful();
+
+        $response = $this->getJsonDecodedResponse($client);
+
+        self::assertArrayHasKey('token', $response);
+        self::assertArrayHasKey('token_name', $response);
+
+        /** @var ExternalApiTokenRepository $tokenRepository */
+        $tokenRepository = $container->get(ExternalApiTokenRepository::class);
+        $token = $tokenRepository->findByToken($response['token']);
+        self::assertNotNull($token);
     }
 }
