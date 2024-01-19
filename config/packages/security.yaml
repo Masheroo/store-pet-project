@@ -13,6 +13,11 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+
+        external_user_provider:
+            entity:
+                class: App\Entity\ExternalApiToken
+                property: id
     firewalls:
         login:
             provider: app_user_provider
@@ -28,11 +33,20 @@ security:
             stateless: true
             jwt: ~
             entry_point: jwt
+            provider: app_user_provider
             refresh_jwt:
                 check_path: api_login_refresh
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
-
+        external_api:
+            pattern: ^/external/api
+            stateless: true
+            provider: external_user_provider
+            access_token:
+                token_handler: App\Security\TokenHandler\AccessTokenHandler
+                token_extractors:
+                    - App\Security\TokenExtractor\AccessTokenExtractor
+                failure_handler: App\Security\AuthenticationHandler\AuthenticationFailureHandler
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
         dev:
@@ -47,6 +61,7 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/registration, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/external/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

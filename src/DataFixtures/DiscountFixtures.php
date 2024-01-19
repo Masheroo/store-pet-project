@@ -29,7 +29,7 @@ class DiscountFixtures extends Fixture implements DependentFixtureInterface
     {
         /** @var UserRepository $userRepository */
         $userRepository = $manager->getRepository(User::class);
-        $user = $userRepository->findByEmail(UserFixture::USER_EMAIL);
+        $user = $userRepository->findByEmail(UserFixture::USER_EMAIL)[0];
 
         $volumeDiscount = new VolumeDiscount(self::VOLUME_DISCOUNT_AMOUNT, self::VOLUME_DISCOUNT_VALUE);
         $manager->persist($volumeDiscount);
