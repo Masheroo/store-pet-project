@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Exceptions\RoleDoesNotExistsException;
 use App\Repository\UserRepository;
+use App\Request\CreateExternalLotRequest;
 use App\Request\ReplenishRequest;
+use App\Service\ExternalApiToken\ExternalApiTokenService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -50,5 +52,18 @@ class UserController extends AbstractController
         $userRepository->flush();
 
         return $this->json('Success');
+    }
+
+    #[IsGranted(User::ROLE_ADMIN)]
+    #[Route('/token', name: 'create_external_token', methods: ['POST'])]
+    public function createToken(#[MapRequestPayload] CreateExternalLotRequest $request, ExternalApiTokenService $tokenService): JsonResponse
+    {
+        $token = $tokenService->create($request->token_name);
+        $body = [
+            'token' => $token->getToken(),
+            'token_name' => $token->getName(),
+        ];
+
+        return $this->json($body);
     }
 }
