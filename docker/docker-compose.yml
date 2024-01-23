@@ -74,6 +74,11 @@ services:
       - "3030:15672"
     networks:
       - net
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
 networks:
   net:
     name: network
