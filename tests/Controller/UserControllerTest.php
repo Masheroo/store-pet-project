@@ -5,6 +5,7 @@ namespace App\Tests\Controller;
 use App\DataFixtures\UserFixture;
 use App\Entity\User;
 use App\Repository\ExternalApiTokenRepository;
+use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
 use App\Tests\Traits\ClientHelperTrait;
 use App\Tests\Traits\UserGetterTrait;
@@ -32,7 +33,7 @@ class UserControllerTest extends WebTestCase
         $user = $this->getUserByEmail(UserFixture::USER_EMAIL, $container);
         $userBalanceBeforeReplenish = $user->getBalance();
 
-        $client->request('post', 'api/user/' . $user->getId(), [
+        $client->request('post', 'api/user/'.$user->getId(), [
             'amount' => 1000,
         ]);
 
@@ -43,6 +44,7 @@ class UserControllerTest extends WebTestCase
 
     /**
      * @throws ExceptionInterface
+     *
      * @covers \App\Controller\UserController::getAllUsers
      */
     public function testGetAllUsers(): void
@@ -119,5 +121,25 @@ class UserControllerTest extends WebTestCase
         $tokenRepository = $container->get(ExternalApiTokenRepository::class);
         $token = $tokenRepository->findByToken($response['token']);
         self::assertNotNull($token);
+    }
+
+    public function testGetShoppingListSuccessful(): void
+    {
+        $client = self::createClient();
+        $container = self::getContainer();
+        $client = $this->getLoginClient($client, $container);
+
+        $client->request('get', 'api/user/shopping-list');
+
+        $response = $this->getJsonDecodedResponse($client);
+        self::assertNotNull($response[0]);
+
+        $user = $this->getUserByEmail(UserFixture::USER_EMAIL, $container);
+
+        /** @var OrderRepository $orderRepository */
+        $orderRepository = $container->get(OrderRepository::class);
+        $ordersCount = count($orderRepository->findBy(['user' => $user]));
+
+        assertEquals($ordersCount, count($response));
     }
 }

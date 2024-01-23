@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Exceptions\RoleDoesNotExistsException;
+use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
 use App\Request\CreateExternalLotRequest;
 use App\Request\ReplenishRequest;
@@ -52,6 +53,12 @@ class UserController extends AbstractController
         $userRepository->flush();
 
         return $this->json('Success');
+    }
+
+    #[Route('/user/shopping-list', 'get_shopping_list', methods: ['GET'])]
+    public function getShoppingList(OrderRepository $orderRepository): JsonResponse
+    {
+        return $this->json($orderRepository->findBy(['user' => $this->getUser()]));
     }
 
     #[IsGranted(User::ROLE_ADMIN)]
