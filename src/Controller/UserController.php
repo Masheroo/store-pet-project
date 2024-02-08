@@ -8,6 +8,7 @@ use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
 use App\Request\CreateExternalLotRequest;
 use App\Request\ReplenishRequest;
+use App\Security\AccessValue;
 use App\Service\ExternalApiToken\ExternalApiTokenService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,7 +19,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api')]
 class UserController extends AbstractController
 {
-    #[IsGranted(User::ROLE_MANAGER)]
+    #[IsGranted(AccessValue::ReplenishUserBalance->value)]
     #[Route('/user/{id}', name: 'user_replenish_balance', methods: ['POST'])]
     public function replenishBalance(
         User $user,
