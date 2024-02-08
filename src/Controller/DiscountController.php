@@ -9,6 +9,7 @@ use App\Request\Discount\CreateDiscountRequest;
 use App\Request\Discount\CreateLotDiscountRequest;
 use App\Request\Discount\CreateUserDiscountRequest;
 use App\Request\Discount\CreateVolumeDiscountRequest;
+use App\Security\AccessValue;
 use App\Service\Discount\DiscountService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,6 +41,7 @@ class DiscountController extends AbstractController
         return $this->json($discountService->createCityDiscount($city, $request->discount));
     }
 
+    #[IsGranted(AccessValue::AddUserDiscount->value)]
     #[Route('/user/{id}', name: 'create_user_discount', methods: 'POST')]
     public function createUserDiscount(
         User $user,

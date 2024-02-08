@@ -2,7 +2,10 @@
 
 namespace App\Tests\Service\Lot;
 
+use App\DataFixtures\UserFixture;
+use App\Entity\User;
 use App\Repository\LotRepository;
+use App\Repository\UserRepository;
 use App\Request\CreateLotRequest;
 use App\Service\Lot\LotService;
 use League\Flysystem\FilesystemException;
@@ -29,9 +32,13 @@ class LotServiceTest extends KernelTestCase
         $file = new \SplFileInfo($testFilesDirectory.DIRECTORY_SEPARATOR.'test.png');
         $createLotRequest->image = new UploadedFile($file->getRealPath(), $file->getFilename());
 
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        /** @var User $user */
+        $user = $userRepository->findOneBy(['email' => UserFixture::MANAGER_EMAIL]);
         /** @var LotService $service */
         $service = $container->get(LotService::class);
-        $savedLot = $service->createLotFromRequest($createLotRequest);
+        $savedLot = $service->createLotFromRequest($createLotRequest, $user);
 
         /** @var LotRepository $lotRepository */
         $lotRepository = $container->get(LotRepository::class);

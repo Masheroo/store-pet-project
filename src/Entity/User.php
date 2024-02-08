@@ -61,10 +61,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
     private Collection $orders;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: AccessRight::class)]
+    private Collection $accessRights;
+
     public function __construct()
     {
         $this->userDiscounts = new ArrayCollection();
         $this->orders = new ArrayCollection();
+        $this->accessRights = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -185,5 +189,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->subtractionFromBalance($order->getPayPrice());
+    }
+
+    /**
+     * @return Collection<int, AccessRight>
+     */
+    public function getAccessRights(): Collection
+    {
+        return $this->accessRights;
+    }
+
+    public function addAccessRight(AccessRight $accessRight): static
+    {
+        if (!$this->accessRights->contains($accessRight)) {
+            $this->accessRights->add($accessRight);
+            $accessRight->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccessRight(AccessRight $accessRight): static
+    {
+        if ($this->accessRights->removeElement($accessRight)) {
+            // set the owning side to null (unless already changed)
+            if ($accessRight->getUser() === $this) {
+                $accessRight->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
