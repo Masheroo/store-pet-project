@@ -12,8 +12,8 @@ use App\Repository\UserRepository;
 use App\Request\BuyLotRequest;
 use App\Request\CreateLotRequest;
 use App\Request\UpdateLotRequest;
+use App\Security\AccessValue;
 use App\Service\Discount\DiscountService;
-use App\Service\Discount\DiscountServiceInterface;
 use App\Service\Lot\LotService;
 use App\Service\Manager\LocalImageManager;
 use App\Service\Resolver\RequestPayloadValueResolver;
@@ -21,7 +21,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -50,7 +49,7 @@ class LotController extends AbstractController
     /**
      * @throws FilesystemException
      */
-    #[IsGranted('ROLE_MANAGER')]
+    #[IsGranted(AccessValue::CreateLot->value)]
     #[Route('/lot', name: 'create_lot', methods: ['POST'])]
     public function createLot(
         #[MapRequestPayload(resolver: RequestPayloadValueResolver::class)]
@@ -60,7 +59,9 @@ class LotController extends AbstractController
         LocalImageManager $imageManager,
         UserRepository $userRepository
     ): JsonResponse {
-        $lot = $lotService->createLotFromRequest($request);
+        /** @var User $user */
+        $user = $this->getUser();
+        $lot = $lotService->createLotFromRequest($request, $user);
 
         $users = $userRepository->findAll();
         foreach ($users as $user) {
@@ -82,7 +83,7 @@ class LotController extends AbstractController
     /**
      * @throws FilesystemException
      */
-    #[IsGranted('ROLE_MANAGER')]
+    #[IsGranted(AccessValue::DeleteOwnLot->value, 'lot')]
     #[Route('/lot/{id}', name: 'delete_lot', methods: ['DELETE'])]
     public function delete(Lot $lot, LotService $lotService): JsonResponse
     {
@@ -91,7 +92,7 @@ class LotController extends AbstractController
         return $this->json([]);
     }
 
-    #[IsGranted('ROLE_MANAGER')]
+    #[IsGranted(AccessValue::UpdateOwnLot->value, 'lot')]
     #[Route('/lot/{id}', name: 'update_lot', methods: ['POST'])]
     public function update(
         #[MapRequestPayload(resolver: RequestPayloadValueResolver::class)]

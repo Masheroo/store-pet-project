@@ -3,6 +3,7 @@
 namespace App\Service\Lot;
 
 use App\Entity\Lot;
+use App\Entity\User;
 use App\Repository\LotRepository;
 use App\Request\CreateLotRequest;
 use App\Request\UpdateLotRequest;
@@ -20,13 +21,14 @@ class LotService
     /**
      * @throws FilesystemException
      */
-    public function createLotFromRequest(CreateLotRequest $request): Lot
+    public function createLotFromRequest(CreateLotRequest $request, User $user): Lot
     {
         $lot = new Lot(
             $request->title,
             $request->cost,
             $request->count,
-            $this->imageManager->saveUploadedImage($request->image)
+            $this->imageManager->saveUploadedImage($request->image),
+            $user
         );
 
         $this->repository->persistAndFlush($lot);

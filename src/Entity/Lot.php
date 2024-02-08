@@ -35,7 +35,10 @@ class Lot
         private int $count,
 
         #[ORM\Column(length: 255, nullable: true)]
-        private string $image
+        private string $image,
+        #[ORM\ManyToOne]
+        #[ORM\JoinColumn(nullable: false)]
+        private readonly User $owner
     ) {
         $this->lotDiscounts = new ArrayCollection();
         $this->orders = new ArrayCollection();
@@ -103,5 +106,10 @@ class Lot
             throw new LotCountException('Quantity to decrease more than count in lot.');
         }
         $this->count -= $countToDecrease;
+    }
+
+    public function getOwner(): User
+    {
+        return $this->owner;
     }
 }
