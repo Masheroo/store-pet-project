@@ -21,28 +21,13 @@ class AccessRightRepository extends ServiceEntityRepository
         parent::__construct($registry, AccessRight::class);
     }
 
-//    /**
-//     * @return AccessRight[] Returns an array of AccessRight objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function persist(AccessRight $accessRight): void
+    {
+        $this->getEntityManager()->persist($accessRight);
+    }
 
-//    public function findOneBySomeField($value): ?AccessRight
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
 }
