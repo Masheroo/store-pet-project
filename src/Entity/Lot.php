@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 #[HasLifecycleCallbacks]
 class Lot
 {
+    public const PREVIEW_SIZE = 200;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -23,6 +24,7 @@ class Lot
 
     #[ORM\OneToMany(mappedBy: 'lot', targetEntity: Order::class)]
     private Collection $orders;
+
 
     public function __construct(
         #[ORM\Column(length: 255)]
@@ -36,9 +38,13 @@ class Lot
 
         #[ORM\Column(length: 255, nullable: true)]
         private string $image,
+
         #[ORM\ManyToOne]
         #[ORM\JoinColumn(nullable: false)]
-        private readonly User $owner
+        private readonly User $owner,
+
+        #[ORM\Column(length: 255)]
+        private string $preview
     ) {
         $this->lotDiscounts = new ArrayCollection();
         $this->orders = new ArrayCollection();
@@ -111,5 +117,17 @@ class Lot
     public function getOwner(): User
     {
         return $this->owner;
+    }
+
+    public function getPreview(): ?string
+    {
+        return $this->preview;
+    }
+
+    public function setPreview(string $preview): static
+    {
+        $this->preview = $preview;
+
+        return $this;
     }
 }

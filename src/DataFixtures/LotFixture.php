@@ -46,7 +46,8 @@ class LotFixture extends Fixture implements DependentFixtureInterface
             $faker->randomFloat(nbMaxDecimals: 2, min: 0, max: 10000000),
             $faker->randomDigitNotZero(),
             $this->imageManager->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
-            $manager
+            $manager,
+            $this->imageManager->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
         );
     }
 

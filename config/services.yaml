@@ -22,6 +22,10 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    Imagine\Gd\Imagine: ~
+    Imagine\Image\ImagineInterface: '@Imagine\Gd\Imagine'
+
     Aws\S3\S3Client:
         arguments:
             $args:
