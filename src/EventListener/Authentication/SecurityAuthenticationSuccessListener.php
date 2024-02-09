@@ -33,7 +33,7 @@ class SecurityAuthenticationSuccessListener
 
             /** @var User $user */
             $user = $token->getUser();
-            if ($user->getLastLogoutAt()->getTimestamp() != $payload['lastLogoutAt'])
+            if ($user->getLastLogoutAt()?->getTimestamp() != $payload['lastLogoutAt'])
             {
                 throw new InvalidTokenException();
             }

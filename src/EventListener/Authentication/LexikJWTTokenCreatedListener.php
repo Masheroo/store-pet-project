@@ -14,7 +14,7 @@ class LexikJWTTokenCreatedListener
     {
         /** @var User $user */
         $user = $event->getUser();
-        $userLastLogout = $user->getLastLogoutAt()->getTimestamp();
+        $userLastLogout = $user->getLastLogoutAt()?->getTimestamp();
 
         $payload = $event->getData();
         $payload['lastLogoutAt'] = $userLastLogout;
