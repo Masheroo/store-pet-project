@@ -64,6 +64,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: AccessRight::class)]
     private Collection $accessRights;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $lastLogoutAt = null;
+
     public function __construct()
     {
         $this->userDiscounts = new ArrayCollection();
@@ -217,6 +220,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $accessRight->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastLogoutAt(): ?\DateTimeImmutable
+    {
+        return $this->lastLogoutAt;
+    }
+
+    public function setLastLogoutAt(?\DateTimeImmutable $lastLogoutAt): static
+    {
+        $this->lastLogoutAt = $lastLogoutAt;
 
         return $this;
     }
