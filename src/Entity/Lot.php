@@ -43,8 +43,8 @@ class Lot
         #[ORM\JoinColumn(nullable: false)]
         private readonly User $owner,
 
-        #[ORM\Column(length: 255)]
-        private string $preview
+        #[ORM\Column(length: 255, nullable: false)]
+        private ?string $preview = null
     ) {
         $this->lotDiscounts = new ArrayCollection();
         $this->orders = new ArrayCollection();

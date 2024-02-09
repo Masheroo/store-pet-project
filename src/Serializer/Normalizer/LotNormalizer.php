@@ -14,7 +14,9 @@ class LotNormalizer implements NormalizerInterface
 {
     public function __construct(
         private readonly LocalImageManager $imageManager
-    ) {}
+    ) {
+    }
+
     /**
      * @inheritDoc
      */
@@ -26,17 +28,19 @@ class LotNormalizer implements NormalizerInterface
         $data['title'] = $object->getTitle();
         $data['cost'] = $object->getCost();
         $data['count'] = $object->getCount();
+
         try {
-            $data['image'] = $this->imageManager->getPublicLink($object->getImage());
-        }catch (FileNotFoundException){
+            $data['image'] = $object->getImage() ? $this->imageManager->getPublicLink($object->getImage()) : null;
+        } catch (FileNotFoundException) {
             $data['image'] = null;
         }
 
         try {
-            $data['preview'] = $this->imageManager->getPublicLink($object->getPreview());
-        }catch (FileNotFoundException){
+            $data['preview'] = $object->getPreview() ? $this->imageManager->getPublicLink($object->getPreview()) : null;
+        } catch (FileNotFoundException) {
             $data['preview'] = null;
         }
+
         return $data;
     }
 
