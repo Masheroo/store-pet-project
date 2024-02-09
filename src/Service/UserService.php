@@ -4,15 +4,19 @@ namespace App\Service;
 
 use App\Entity\City;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserService
 {
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly ValidatorInterface $validator
+        private readonly ValidatorInterface $validator,
+        private readonly EntityManagerInterface $entityManager
     ) {
     }
 
@@ -55,5 +59,16 @@ class UserService
         $user->setRoles([User::ROLE_MANAGER]);
 
         return $user;
+    }
+
+    public function changePassword(User $user, string $newPassword): void
+    {
+        $violations = $this->validator->validate($newPassword, new Length(min:3));
+        if (count($violations) != 0) {
+            throw new ValidatorException('Password cannot be changed', $violations);
+        }
+
+        $user->setPassword($this->passwordHasher->hashPassword($user, $newPassword));
+        $this->entityManager->flush();
     }
 }
