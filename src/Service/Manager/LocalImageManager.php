@@ -2,6 +2,8 @@
 
 namespace App\Service\Manager;
 
+use App\Entity\Lot;
+use Imagine\Image\ImagineInterface;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
@@ -12,6 +14,7 @@ class LocalImageManager
 {
     public function __construct(
         private readonly FilesystemOperator $defaultStorage,
+        private readonly ImagineInterface $imagine
     ) {
     }
 
@@ -20,7 +23,7 @@ class LocalImageManager
      */
     public function saveUploadedImage(UploadedFile $uploadedFile): string
     {
-        $newFilename = uniqid().'.'.$uploadedFile->getClientOriginalExtension();
+        $newFilename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
         $this->defaultStorage->write($newFilename, $uploadedFile->getContent());
 
         return $newFilename;
@@ -34,7 +37,7 @@ class LocalImageManager
     public function save(string $pathToFile): string
     {
         $file = new File($pathToFile, true);
-        $newFilename = uniqid().'.'.$file->getExtension();
+        $newFilename = uniqid() . '.' . $file->getExtension();
         $this->defaultStorage->write($newFilename, $file->getContent());
 
         return $newFilename;
@@ -76,4 +79,32 @@ class LocalImageManager
 
         return $this->defaultStorage->publicUrl($filename);
     }
+
+    /**
+     * Returns filename
+     * @param UploadedFile $image
+     * @return string
+     * @throws FilesystemException
+     */
+    public function convertUploadedImageToLotPreviewAndSave(UploadedFile $image): string
+    {
+        $openedImage = $this->imagine->open($image->getRealPath());
+        $imageSize = $openedImage->getSize();
+
+        if ($imageSize->getHeight() > Lot::PREVIEW_SIZE || $imageSize->getHeight() > Lot::PREVIEW_SIZE) {
+            if ($imageSize->getWidth() > $imageSize->getHeight()) {
+                $newImageSize = $imageSize->widen(Lot::PREVIEW_SIZE);
+            } else {
+                $newImageSize = $imageSize->heighten(Lot::PREVIEW_SIZE);
+            }
+
+            $openedImage->resize($newImageSize);
+        }
+
+        $newFilename = uniqid() . '.' . $image->getClientOriginalExtension();
+        $this->defaultStorage->write($newFilename, $openedImage->get($image->getClientOriginalExtension()));
+
+        return $newFilename;
+    }
+
 }

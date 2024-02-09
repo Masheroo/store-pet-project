@@ -28,7 +28,8 @@ class LotService
             $request->cost,
             $request->count,
             $this->imageManager->saveUploadedImage($request->image),
-            $user
+            $user,
+            $this->imageManager->convertUploadedImageToLotPreviewAndSave($request->image)
         );
 
         $this->repository->persistAndFlush($lot);
