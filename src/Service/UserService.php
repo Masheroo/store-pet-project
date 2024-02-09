@@ -69,6 +69,7 @@ class UserService
         }
 
         $user->setPassword($this->passwordHasher->hashPassword($user, $newPassword));
+        $user->setLastLogoutAt(new \DateTimeImmutable());
         $this->entityManager->flush();
     }
 }
