@@ -6,7 +6,7 @@ use App\DataFixtures\UserFixture;
 use App\Entity\User;
 use App\Repository\LotRepository;
 use App\Repository\UserRepository;
-use App\Service\Manager\LocalImageManager;
+use App\Tests\Helpers\FileSystemHelper;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -39,8 +39,8 @@ class DeleteTest extends WebTestCase
         $testFilesDir = $container->getParameter('test_files_dir');
         $testFilePath = $testFilesDir.DIRECTORY_SEPARATOR.'test-image.png';
 
-         /** @var LocalImageManager $imageManager */
-        $imageManager = $container->get(LocalImageManager::class);
+         /** @var FileSystemHelper $imageManager */
+        $imageManager = $container->get(FileSystemHelper::class);
         $imageManager->copyToUploadDir($testFilePath, $lot->getImage());
         self::assertFileExists($lotImageFilepath);
 

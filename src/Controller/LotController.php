@@ -15,7 +15,7 @@ use App\Request\UpdateLotRequest;
 use App\Security\AccessValue;
 use App\Service\Discount\DiscountService;
 use App\Service\Lot\LotService;
-use App\Service\Manager\LocalImageManager;
+use App\Service\Manager\FileManager;
 use App\Service\Resolver\RequestPayloadValueResolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -56,7 +56,7 @@ class LotController extends AbstractController
         CreateLotRequest $request,
         LotService $lotService,
         MessageBusInterface $messageBus,
-        LocalImageManager $imageManager,
+        FileManager $imageManager,
         UserRepository $userRepository
     ): JsonResponse {
         /** @var User $user */

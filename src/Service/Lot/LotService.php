@@ -7,14 +7,16 @@ use App\Entity\User;
 use App\Repository\LotRepository;
 use App\Request\CreateLotRequest;
 use App\Request\UpdateLotRequest;
-use App\Service\Manager\LocalImageManager;
+use App\Service\Manager\FileManager;
+use App\Service\Manager\LotImageManager;
 use League\Flysystem\FilesystemException;
 
-class LotService
+readonly class LotService
 {
     public function __construct(
-        private readonly LocalImageManager $imageManager,
-        private readonly LotRepository $repository
+        private LotImageManager $lotImageManager,
+        private readonly FileManager $fileManager,
+        private LotRepository $repository
     ) {
     }
 
@@ -27,9 +29,9 @@ class LotService
             $request->title,
             $request->cost,
             $request->count,
-            $this->imageManager->saveUploadedImage($request->image),
+            $this->fileManager->saveUploadedImage($request->image),
             $user,
-            $this->imageManager->convertUploadedImageToLotPreviewAndSave($request->image)
+            $this->lotImageManager->convertUploadedImageToPreviewAndSave($request->image)
         );
 
         $this->repository->persistAndFlush($lot);
@@ -37,6 +39,9 @@ class LotService
         return $lot;
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function updateLotFromRequest(Lot $lot,  UpdateLotRequest $request): Lot
     {
         if ($request->title){
@@ -52,8 +57,8 @@ class LotService
         }
 
         if ($request->image){
-            $this->imageManager->deleteIfExists($lot->getImage());
-            $lot->setImage($this->imageManager->saveUploadedImage($request->image));
+            $this->fileManager->delete($lot->getImage());
+            $lot->setImage($this->fileManager->saveUploadedImage($request->image));
         }
 
         $this->repository->flush();
@@ -67,6 +72,6 @@ class LotService
     public function deleteWithImage(Lot $lot): void
     {
         $this->repository->deleteAndFlush($lot);
-        $this->imageManager->deleteIfExists($lot->getImage());
+        $this->fileManager->delete($lot->getImage());
     }
 }

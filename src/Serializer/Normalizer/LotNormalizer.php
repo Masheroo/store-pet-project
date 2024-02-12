@@ -3,7 +3,7 @@
 namespace App\Serializer\Normalizer;
 
 use App\Entity\Lot;
-use App\Service\Manager\LocalImageManager;
+use App\Service\Manager\FileManager;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class LotNormalizer implements NormalizerInterface
 {
     public function __construct(
-        private readonly LocalImageManager $imageManager
+        private readonly FileManager $imageManager
     ) {
     }
 

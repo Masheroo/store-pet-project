@@ -6,7 +6,7 @@ use App\DataFixtures\UserFixture;
 use App\Entity\User;
 use App\Repository\LotRepository;
 use App\Repository\UserRepository;
-use App\Service\Manager\LocalImageManager;
+use App\Tests\Helpers\FileSystemHelper;
 use App\Tests\Traits\ClientConfiguratorTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -27,8 +27,8 @@ class CreateTest extends WebTestCase
         self::ensureKernelShutdown();
         $client = self::createClient();
         $container = self::getContainer();
-        /** @var LocalImageManager $imageManager */
-        $imageManager = $container->get(LocalImageManager::class);
+        /** @var FileSystemHelper $imageManager */
+        $imageManager = $container->get(FileSystemHelper::class);
 
         /** @var UserRepository $userRepository */
         $userRepository = $container->get(UserRepository::class);
