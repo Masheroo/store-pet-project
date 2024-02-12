@@ -6,7 +6,7 @@ use App\Entity\Lot;
 use App\Entity\User;
 use App\Repository\LotRepository;
 use App\Repository\UserRepository;
-use App\Service\Manager\LocalImageManager;
+use App\Tests\Helpers\FileSystemHelper;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -20,7 +20,7 @@ class LotFixture extends Fixture implements DependentFixtureInterface
 
     public function __construct(
         private readonly LotRepository $repository,
-        private readonly LocalImageManager $imageManager,
+        private readonly FileSystemHelper $fileSystemHelper,
         private readonly UserRepository $userRepository,
     ) {
     }
@@ -45,9 +45,9 @@ class LotFixture extends Fixture implements DependentFixtureInterface
             $faker->company().', '.$faker->firstNameFemale().' '.$faker->randomDigitNotZero(),
             $faker->randomFloat(nbMaxDecimals: 2, min: 0, max: 10000000),
             $faker->randomDigitNotZero(),
-            $this->imageManager->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
+            $this->fileSystemHelper->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
             $manager,
-            $this->imageManager->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
+            $this->fileSystemHelper->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
         );
     }
 

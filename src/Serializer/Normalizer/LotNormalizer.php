@@ -3,8 +3,7 @@
 namespace App\Serializer\Normalizer;
 
 use App\Entity\Lot;
-use App\Service\Manager\LocalImageManager;
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use App\Service\Manager\FileManager;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
@@ -13,41 +12,26 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class LotNormalizer implements NormalizerInterface
 {
     public function __construct(
-        private readonly LocalImageManager $imageManager
+        private readonly FileManager $imageManager
     ) {
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function normalize(mixed $object, string $format = null, array $context = [])
+    public function normalize(mixed $object, string $format = null, array $context = []): float|int|bool|\ArrayObject|array|string|null
     {
         $data = [];
-        /**@var Lot $object */
+        /** @var Lot $object */
+
         $data['id'] = $object->getId();
         $data['title'] = $object->getTitle();
         $data['cost'] = $object->getCost();
         $data['count'] = $object->getCount();
-
-        try {
-            $data['image'] = $object->getImage() ? $this->imageManager->getPublicLink($object->getImage()) : null;
-        } catch (FileNotFoundException) {
-            $data['image'] = null;
-        }
-
-        try {
-            $data['preview'] = $object->getPreview() ? $this->imageManager->getPublicLink($object->getPreview()) : null;
-        } catch (FileNotFoundException) {
-            $data['preview'] = null;
-        }
+        $data['image'] = $object->getImage() ? $this->imageManager->getPublicLink($object->getImage()) : null;
+        $data['preview'] = $object->getPreview() ? $this->imageManager->getPublicLink($object->getPreview()) : null;
 
         return $data;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function supportsNormalization(mixed $data, string $format = null)
+    public function supportsNormalization(mixed $data, string $format = null): bool
     {
         return $data instanceof Lot;
     }

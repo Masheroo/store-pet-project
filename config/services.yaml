@@ -26,6 +26,8 @@ services:
     Imagine\Gd\Imagine: ~
     Imagine\Image\ImagineInterface: '@Imagine\Gd\Imagine'
 
+    App\Tests\Helpers\FileSystemHelper: ~
+
     Aws\S3\S3Client:
         arguments:
             $args:
