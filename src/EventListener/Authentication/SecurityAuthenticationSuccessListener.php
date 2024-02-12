@@ -17,8 +17,7 @@ class SecurityAuthenticationSuccessListener
     public function __construct(
         private readonly JWTTokenManagerInterface $JWTTokenManager,
         private readonly SerializerInterface $serializer
-    )
-    {
+    ) {
     }
 
     /**
@@ -28,13 +27,12 @@ class SecurityAuthenticationSuccessListener
     {
         $token = $event->getAuthenticationToken();
 
-        if ($token instanceof JWTPostAuthenticationToken){
+        if ($token instanceof JWTPostAuthenticationToken) {
             $payload = $this->JWTTokenManager->decode($token);
 
             /** @var User $user */
             $user = $token->getUser();
-            if ($user->getLastLogoutAt()?->getTimestamp() != $payload['lastLogoutAt'])
-            {
+            if ($user->getLastLogoutAt()?->getTimestamp() != ($payload['lastLogoutAt'] ?? null)) {
                 throw new InvalidTokenException();
             }
         }

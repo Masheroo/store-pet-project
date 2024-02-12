@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Exceptions\RoleDoesNotExistsException;
 use App\Repository\OrderRepository;
+use App\Repository\RefreshTokenRepository;
 use App\Repository\UserRepository;
 use App\Request\AddAccessRightRequest;
 use App\Request\ChangeUserPasswordRequest;
@@ -14,7 +15,6 @@ use App\Security\AccessValue;
 use App\Service\AccessService;
 use App\Service\ExternalApiToken\ExternalApiTokenService;
 use App\Service\UserService;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -101,10 +101,10 @@ class UserController extends AbstractController
         #[MapRequestPayload] ChangeUserPasswordRequest $request,
         User $user,
         UserService $service,
-        JWTTokenManagerInterface $JWTTokenManager,
+        RefreshTokenRepository $refreshTokenRepository
     ): JsonResponse {
         $service->changePassword($user, $request->password);
-        $JWTTokenManager->create($user);
+        $refreshTokenRepository->deleteAllByByUser($user);
 
         return $this->json('Password changed successful!');
     }
