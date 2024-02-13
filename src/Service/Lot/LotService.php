@@ -27,9 +27,7 @@ readonly class LotService
      */
     public function createLotFromRequest(CreateLotRequest $request, User $user): Lot
     {
-        if ($request->category){
-            $category = $this->categoryRepository->find($request->category);
-        }
+        $category = $this->categoryRepository->find($request->category);
 
         $lot = new Lot(
             $request->title,
@@ -37,7 +35,7 @@ readonly class LotService
             count: $request->count,
             image: $this->fileManager->saveUploadedImage($request->image),
             owner: $user,
-            category: $category ?? null,
+            category: $category,
             preview: $this->lotImageManager->convertUploadedImageToPreviewAndSave($request->image)
         );
 
