@@ -2,8 +2,9 @@
 
 namespace App\Request;
 
+use App\Entity\City;
 use App\Entity\User;
-use App\Validator\ExistsCity;
+use Happyr\Validator\Constraint\EntityExist;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -15,7 +16,7 @@ class RegistrationRequest
     public string $email;
 
     #[NotBlank]
-    #[ExistsCity]
+    #[EntityExist(entity: City::class)]
     public int $city;
 
     #[NotBlank]
