@@ -2,6 +2,8 @@
 
 namespace App\Request;
 
+use App\Entity\Category;
+use Happyr\Validator\Constraint\EntityExist;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -21,4 +23,7 @@ class CreateLotRequest
     #[Assert\NotBlank]
     #[Assert\Image]
     public UploadedFile $image;
+
+    #[EntityExist(entity: Category::class, property: 'id')]
+    public ?int $category = null;
 }
