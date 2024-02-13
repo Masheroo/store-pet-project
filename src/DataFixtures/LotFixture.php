@@ -2,8 +2,10 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Category;
 use App\Entity\Lot;
 use App\Entity\User;
+use App\Repository\CategoryRepository;
 use App\Repository\LotRepository;
 use App\Repository\UserRepository;
 use App\Tests\Helpers\FileSystemHelper;
@@ -22,6 +24,7 @@ class LotFixture extends Fixture implements DependentFixtureInterface
         private readonly LotRepository $repository,
         private readonly FileSystemHelper $fileSystemHelper,
         private readonly UserRepository $userRepository,
+        private readonly CategoryRepository $categoryRepository
     ) {
     }
 
@@ -29,9 +32,10 @@ class LotFixture extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
         $userManager = $this->userRepository->findOneBy(['email' => UserFixture::MANAGER_EMAIL]);
+        $category =  $this->categoryRepository->findAll()[0];
 
         for ($i = 0; $i < self::COUNT_OF_LOTS; ++$i) {
-            $this->repository->persist($this->createLotHelpsFaker($faker, $userManager));
+            $this->repository->persist($this->createLotHelpsFaker($faker, $userManager, $category));
         }
         $manager->flush();
     }
@@ -39,7 +43,7 @@ class LotFixture extends Fixture implements DependentFixtureInterface
     /**
      * @throws FilesystemException
      */
-    public function createLotHelpsFaker(Generator $faker, User $manager): Lot
+    public function createLotHelpsFaker(Generator $faker, User $manager, Category $category): Lot
     {
         return new Lot(
             $faker->company().', '.$faker->firstNameFemale().' '.$faker->randomDigitNotZero(),
@@ -47,7 +51,7 @@ class LotFixture extends Fixture implements DependentFixtureInterface
             $faker->randomDigitNotZero(),
             $this->fileSystemHelper->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
             $manager,
-            null,
+            $category,
             $this->fileSystemHelper->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
         );
     }
@@ -55,7 +59,8 @@ class LotFixture extends Fixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            UserFixture::class
+            UserFixture::class,
+            CategoryFixtures::class
         ];
     }
 }
