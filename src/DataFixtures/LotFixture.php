@@ -47,6 +47,7 @@ class LotFixture extends Fixture implements DependentFixtureInterface
             $faker->randomDigitNotZero(),
             $this->fileSystemHelper->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
             $manager,
+            null,
             $this->fileSystemHelper->save(__DIR__.DIRECTORY_SEPARATOR.'blank-image.png'),
         );
     }

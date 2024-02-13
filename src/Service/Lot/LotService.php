@@ -27,11 +27,12 @@ readonly class LotService
     {
         $lot = new Lot(
             $request->title,
-            $request->cost,
-            $request->count,
-            $this->fileManager->saveUploadedImage($request->image),
-            $user,
-            $this->lotImageManager->convertUploadedImageToPreviewAndSave($request->image)
+            cost: $request->cost,
+            count: $request->count,
+            image: $this->fileManager->saveUploadedImage($request->image),
+            owner: $user,
+//            category: $request->category,
+            preview: $this->lotImageManager->convertUploadedImageToPreviewAndSave($request->image)
         );
 
         $this->repository->persistAndFlush($lot);

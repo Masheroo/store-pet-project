@@ -25,7 +25,6 @@ class Lot
     #[ORM\OneToMany(mappedBy: 'lot', targetEntity: Order::class)]
     private Collection $orders;
 
-
     public function __construct(
         #[ORM\Column(length: 255)]
         private string $title,
@@ -42,6 +41,10 @@ class Lot
         #[ORM\ManyToOne]
         #[ORM\JoinColumn(nullable: false)]
         private readonly User $owner,
+
+        #[ORM\ManyToOne(inversedBy: 'lots')]
+        #[ORM\JoinColumn(nullable: false)]
+        private ?Category $category = null,
 
         #[ORM\Column(length: 255, nullable: false)]
         private ?string $preview = null
@@ -127,6 +130,18 @@ class Lot
     public function setPreview(string $preview): static
     {
         $this->preview = $preview;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }
