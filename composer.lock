@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a0c841171b78c6d9af0e2d976a62321",
+    "content-hash": "7c23ee29c884eeaf023c96c9cf76bf6f",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2017,6 +2017,61 @@
                 }
             ],
             "time": "2023-12-03T20:05:35+00:00"
+        },
+        {
+            "name": "happyr/entity-exists-validation-constraint",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Happyr/entity-exists-validation-constraint.git",
+                "reference": "eb888e90e3743ee4e1b17752eb5658ce03ce3ce5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Happyr/entity-exists-validation-constraint/zipball/eb888e90e3743ee4e1b17752eb5658ce03ce3ce5",
+                "reference": "eb888e90e3743ee4e1b17752eb5658ce03ce3ce5",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "^2.4",
+                "php": "^7.2 || ^8.0",
+                "symfony/validator": "^3.4 || ^4.4 || ^5.0 || ^6.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Happyr\\Validator\\Constraint\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Radoje Albijanic",
+                    "email": "radoje.albijanic@gmail.com"
+                },
+                {
+                    "name": "Tobias Nyholm",
+                    "email": "tobias.nyholm@gmail.com"
+                }
+            ],
+            "description": "Verify that your entity exists",
+            "support": {
+                "issues": "https://github.com/Happyr/entity-exists-validation-constraint/issues",
+                "source": "https://github.com/Happyr/entity-exists-validation-constraint/tree/1.1.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Nyholm",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-06-21T15:25:17+00:00"
         },
         {
             "name": "imagine/imagine",
