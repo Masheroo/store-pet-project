@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Repository\CategoryFieldRepository;
 use App\Repository\CategoryRepository;
 use App\Tests\Traits\ClientHelperTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -79,5 +80,28 @@ class CategoryControllerTest extends WebTestCase
         $response = $this->getJsonDecodedResponse($client);
 
         self::assertNotEmpty($response);
+    }
+
+    /** @covers \App\Controller\CategoryController::getAll */
+    public function testAddCategoryFieldSuccessful(): void
+    {
+        $client = $this->getLoginByManagerClient(self::createClient(), $container = self::getContainer());
+
+        $fieldName = 'test1-'.(new \DateTimeImmutable())->getTimestamp();
+        /** @var CategoryRepository $categoryRepository */
+        $categoryRepository = $container->get(CategoryRepository::class);
+        $category = $categoryRepository->findAll()[0];
+
+        $client->request('post', '/api/category/'.$category->getId().'/field', [
+            'name' => $fieldName,
+        ]);
+
+        self::assertResponseIsSuccessful();
+
+        /** @var CategoryFieldRepository $categoryFieldRepository */
+        $categoryFieldRepository = $container->get(CategoryFieldRepository::class);
+        $categoryField = $categoryFieldRepository->findOneBy(['name' => $fieldName]);
+
+        self::assertNotNull($categoryField);
     }
 }

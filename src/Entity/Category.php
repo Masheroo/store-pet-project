@@ -18,12 +18,16 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Lot::class)]
     private Collection $lots;
 
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: CategoryField::class, orphanRemoval: true)]
+    private Collection $fields;
+
     public function __construct(
         #[ORM\Column(length: 255)]
         private string $name
     )
     {
         $this->lots = new ArrayCollection();
+        $this->fields = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -47,5 +51,13 @@ class Category
     public function getLots(): Collection
     {
         return $this->lots;
+    }
+
+    /**
+     * @return Collection<int, CategoryField>
+     */
+    public function getFields(): Collection
+    {
+        return $this->fields;
     }
 }

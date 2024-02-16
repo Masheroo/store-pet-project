@@ -25,5 +25,6 @@ class CreateLotRequest
     public UploadedFile $image;
 
     #[EntityExist(entity: Category::class, property: 'id')]
+    #[Assert\NotBlank]
     public int $category;
 }

@@ -1,8 +1,8 @@
 docker-start:
-	docker-compose -r ./docker/docker-compose.yml up -d
+	docker-compose -f ./docker/docker-compose.yml up -d
 
 docker-stop:
-	docker-compose -r ./docker/docker-compose.yml stop
+	docker-compose -f ./docker/docker-compose.yml stop
 
 php-bash:
 	docker exec -it fpm bash
