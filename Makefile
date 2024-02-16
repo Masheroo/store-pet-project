@@ -12,3 +12,7 @@ tests:
 
 open-coverage:
 	xdg-open ./tests/coverage/index.html
+
+migrate:
+	symfony console d:m:m --no-interaction
+	symfony console d:m:m --env=test --no-interaction
