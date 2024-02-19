@@ -20,29 +20,10 @@ class FieldValueRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, FieldValue::class);
     }
-
-//    /**
-//     * @return FieldValue[] Returns an array of FieldValue objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?FieldValue
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function save(FieldValue $fieldValue): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($fieldValue);
+        $em->flush();
+    }
 }

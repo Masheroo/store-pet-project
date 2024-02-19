@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\Repository\CategoryFieldRepository;
 use App\Repository\CategoryRepository;
+use App\Repository\FieldValueRepository;
 use App\Tests\Traits\ClientHelperTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -103,5 +104,27 @@ class CategoryControllerTest extends WebTestCase
         $categoryField = $categoryFieldRepository->findOneBy(['name' => $fieldName]);
 
         self::assertNotNull($categoryField);
+    }
+
+    public function testAddCategoryFieldValueSuccessful(): void
+    {
+        $client = $this->getLoginByManagerClient(self::createClient(), $container = self::getContainer());
+
+        /** @var CategoryFieldRepository $categoryFieldRepository */
+        $categoryFieldRepository = $container->get(CategoryFieldRepository::class);
+        $categoryField = $categoryFieldRepository->findAll()[0];
+        assert(null != $categoryField);
+
+        $client->request('POST', '/api/category/'.$categoryField->getCategory()->getId().'/field/'.$categoryField->getId(), [
+            'value' => 'test-chose-1',
+        ]);
+
+        self::assertResponseIsSuccessful();
+
+        /** @var FieldValueRepository $fieldValueRepository */
+        $fieldValueRepository = $container->get(FieldValueRepository::class);
+        $fieldValue = $fieldValueRepository->findOneBy(['value' => 'test-chose-1', 'field' => $categoryField]);
+
+        self::assertNotNull($fieldValue);
     }
 }

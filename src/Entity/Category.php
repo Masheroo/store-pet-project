@@ -6,6 +6,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -24,8 +25,7 @@ class Category
     public function __construct(
         #[ORM\Column(length: 255)]
         private string $name
-    )
-    {
+    ) {
         $this->lots = new ArrayCollection();
         $this->fields = new ArrayCollection();
     }
@@ -56,6 +56,7 @@ class Category
     /**
      * @return Collection<int, CategoryField>
      */
+    #[Ignore]
     public function getFields(): Collection
     {
         return $this->fields;

@@ -13,7 +13,6 @@ class CategoryField
     #[ORM\Column]
     private ?int $id = null;
 
-
     public function __construct(
         #[ORM\Column(length: 255)]
         private string $name,
@@ -37,5 +36,10 @@ class CategoryField
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getCategory(): Category
+    {
+        return $this->category;
     }
 }

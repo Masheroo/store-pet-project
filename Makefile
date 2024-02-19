@@ -7,7 +7,7 @@ docker-stop:
 php-bash:
 	docker exec -it fpm bash
 
-tests:
+start-tests:
 	php bin/phpunit
 
 open-coverage:
@@ -16,3 +16,6 @@ open-coverage:
 migrate:
 	symfony console d:m:m --no-interaction
 	symfony console d:m:m --env=test --no-interaction
+
+fixtures-test:
+	symfony console d:f:l --no-interaction --env=test
