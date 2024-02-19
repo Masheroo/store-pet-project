@@ -79,9 +79,7 @@ class CategoryController extends AbstractController
     public function addFieldValue(
         #[MapRequestPayload]
         AddCategoryFieldValueRequest $request,
-        #[MapEntity(expr: 'repository.find(category_id)')]
-        Category $category,
-        #[MapEntity(expr: 'repository.find(field_id)')]
+        #[MapEntity(expr: 'repository.findOneBy({"category": category_id, "id": field_id})')]
         CategoryField $field,
         FieldValueRepository $fieldValueRepository,
     ): JsonResponse {
