@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\FieldValue;
 use App\Entity\Lot;
 use App\Entity\Order;
@@ -34,10 +35,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api')]
 class LotController extends AbstractController
 {
-    #[Route('/lots', name: 'get_all_lots', methods: ['GET'])]
-    public function getAllLots(LotRepository $repository): JsonResponse
-    {
-        return $this->json($repository->findAll());
+    #[Route('/category/{id}/lots', name: 'get_all_lots', methods: ['GET'])]
+    public function getAllLots(
+        Category $category,
+    ): JsonResponse {
+        return $this->json($category->getLots());
     }
 
     #[Route('/lot/{id}', name: 'get_one_lot', methods: ['GET'])]
