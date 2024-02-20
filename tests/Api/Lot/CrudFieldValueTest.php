@@ -7,10 +7,10 @@ use App\Repository\LotRepository;
 use App\Tests\Traits\ClientHelperTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class AddFieldValueTest extends WebTestCase
+class CrudFieldValueTest extends WebTestCase
 {
     use ClientHelperTrait;
-    public function testAddFieldSuccessful(): void
+    public function testFieldValueLifecycleSuccessful(): void
     {
         $client = $this->getLoginByManagerClient(self::createClient(), $container = self::getContainer());
 
@@ -25,5 +25,13 @@ class AddFieldValueTest extends WebTestCase
         $client->request('POST', '/api/lot/'.$lot->getId().'/field/'.$fieldValue->getId().'/add');
 
         self::assertResponseIsSuccessful();
+
+        self::assertContains($fieldValue, $lot->getFieldValues());
+
+        $client->request('DELETE', '/api/lot/'.$lot->getId().'/field/'.$fieldValue->getId().'/remove');
+
+        $lot = $lotRepository->find($lot->getId());
+
+        self::assertNotContains($fieldValue, $lot->getFieldValues());
     }
 }

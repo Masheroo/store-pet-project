@@ -160,4 +160,19 @@ class LotController extends AbstractController
 
         return $this->json($lot->getFieldValues());
     }
+
+    #[Route('/lot/{lot_id}/field/{field_id}/remove', name: 'remove_category_field_value_to_lot', methods: ['DELETE'])]
+    public function removeCategoryFieldValue(
+        #[MapEntity(id: 'lot_id')]
+        Lot $lot,
+        #[MapEntity(id: 'field_id')]
+        FieldValue $fieldValue,
+        EntityManagerInterface $manager
+    ): JsonResponse
+    {
+        $lot->removeFieldValue($fieldValue);
+        $manager->flush();
+
+        return $this->json($lot->getFieldValues());
+    }
 }

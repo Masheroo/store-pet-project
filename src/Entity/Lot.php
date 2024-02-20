@@ -146,6 +146,22 @@ class Lot
         if ($fieldValue->getField()->getCategory() !== $this->category) {
             throw new \DomainException('Данное значение не относится к полям категории этого лота');
         }
+
+        if ($this->fieldValues->contains($fieldValue)) {
+            return;
+        }
+
         $this->fieldValues->add($fieldValue);
+    }
+
+    public function removeFieldValue(FieldValue $fieldValue): void
+    {
+        if ($fieldValue->getField()->getCategory() !== $this->category) {
+            throw new \DomainException('Данное значение не относится к полям категории этого лота');
+        }
+
+        if ($this->fieldValues->contains($fieldValue)) {
+           $this->fieldValues->remove($fieldValue);
+        }
     }
 }
