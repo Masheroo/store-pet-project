@@ -19,3 +19,8 @@ migrate:
 
 fixtures-test:
 	symfony console d:f:l --no-interaction --env=test
+
+fixtures-current:
+	symfony console d:f:l --no-interaction
+
+fixtures-all: fixtures-test fixtures-current

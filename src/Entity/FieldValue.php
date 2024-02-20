@@ -36,4 +36,12 @@ class FieldValue
     {
         $this->value = $value;
     }
+
+    /**
+     * @return CategoryField
+     */
+    public function getField(): CategoryField
+    {
+        return $this->field;
+    }
 }

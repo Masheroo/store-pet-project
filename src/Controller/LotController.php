@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\FieldValue;
 use App\Entity\Lot;
 use App\Entity\Order;
 use App\Entity\User;
@@ -18,8 +19,8 @@ use App\Service\Lot\LotService;
 use App\Service\Manager\FileManager;
 use App\Service\Resolver\RequestPayloadValueResolver;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,7 +30,6 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\VarExporter\Exception\NotInstantiableTypeException;
 
 #[Route('/api')]
 class LotController extends AbstractController
@@ -106,8 +106,6 @@ class LotController extends AbstractController
     }
 
     /**
-     * @throws NotInstantiableTypeException
-     * @throws NonUniqueResultException
      * @throws LotCountException
      */
     #[Route('/lot/buy/{lotId}', name: 'buy_lot', methods: ['POST'])]
@@ -145,5 +143,21 @@ class LotController extends AbstractController
         }
 
         return $this->json($order);
+    }
+
+    #[IsGranted(User::ROLE_MANAGER)]
+    #[Route('/lot/{lot_id}/field/{field_id}/add', name: 'add_category_field_value_to_lot', methods: ['POST'])]
+    public function addCategoryFieldValue(
+        #[MapEntity(id: 'lot_id')]
+        Lot $lot,
+        #[MapEntity(id: 'field_id')]
+        FieldValue $fieldValue,
+        EntityManagerInterface $manager
+    ): JsonResponse
+    {
+        $lot->addFieldValue($fieldValue);
+        $manager->flush();
+
+        return $this->json($lot->getFieldValues());
     }
 }

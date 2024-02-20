@@ -140,4 +140,12 @@ class Lot
     {
         return $this->fieldValues;
     }
+
+    public function addFieldValue(FieldValue $fieldValue): void
+    {
+        if ($fieldValue->getField()->getCategory() !== $this->category) {
+            throw new \DomainException('Данное значение не относится к полям категории этого лота');
+        }
+        $this->fieldValues->add($fieldValue);
+    }
 }
