@@ -22,6 +22,9 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: CategoryField::class, orphanRemoval: true)]
     private Collection $fields;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $slug = null;
+
     public function __construct(
         #[ORM\Column(length: 255)]
         private string $name
@@ -60,5 +63,17 @@ class Category
     public function getFields(): Collection
     {
         return $this->fields;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 }
