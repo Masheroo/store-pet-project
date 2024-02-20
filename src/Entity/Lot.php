@@ -25,6 +25,9 @@ class Lot
     #[ORM\OneToMany(mappedBy: 'lot', targetEntity: Order::class)]
     private Collection $orders;
 
+    #[ORM\ManyToMany(targetEntity: FieldValue::class)]
+    private Collection $fieldValues;
+
     public function __construct(
         #[ORM\Column(length: 255)]
         private string $title,
@@ -44,12 +47,13 @@ class Lot
 
         #[ORM\ManyToOne(inversedBy: 'lots')]
         #[ORM\JoinColumn(nullable: false)]
-        private ?Category $category = null,
+        private readonly Category $category,
 
         #[ORM\Column(length: 255, nullable: false)]
         private ?string $preview = null
     ) {
         $this->lotDiscounts = new ArrayCollection();
+        $this->fieldValues = new ArrayCollection();
         $this->orders = new ArrayCollection();
     }
 
@@ -127,22 +131,13 @@ class Lot
         return $this->preview;
     }
 
-    public function setPreview(string $preview): static
-    {
-        $this->preview = $preview;
-
-        return $this;
-    }
-
     public function getCategory(): ?Category
     {
         return $this->category;
     }
 
-    public function setCategory(?Category $category): static
+    public function getFieldValues(): Collection
     {
-        $this->category = $category;
-
-        return $this;
+        return $this->fieldValues;
     }
 }
