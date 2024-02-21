@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Category
 {
     #[ORM\Id]
@@ -22,7 +23,8 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: CategoryField::class, orphanRemoval: true)]
     private Collection $fields;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    /** @generated \App\EventListener\EntityListener\CategoryListener */
+    #[ORM\Column(length: 255, nullable: false)]
     private ?string $slug = null;
 
     public function __construct(
