@@ -13,6 +13,9 @@ class CategoryField
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $slug = null;
+
     public function __construct(
         #[ORM\Column(length: 255)]
         private string $name,
@@ -41,5 +44,17 @@ class CategoryField
     public function getCategory(): Category
     {
         return $this->category;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 }
