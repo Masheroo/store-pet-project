@@ -13,7 +13,7 @@ class CategoryField
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: false)]
     private ?string $slug = null;
 
     public function __construct(
