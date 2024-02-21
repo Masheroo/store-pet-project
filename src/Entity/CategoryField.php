@@ -4,8 +4,10 @@ namespace App\Entity;
 
 use App\Repository\CategoryFieldRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: CategoryFieldRepository::class)]
+#[UniqueEntity(['name', 'category'], message: 'This field name already exists for this category', errorPath: 'name')]
 class CategoryField
 {
     #[ORM\Id]

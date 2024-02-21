@@ -106,6 +106,23 @@ class CategoryControllerTest extends WebTestCase
         self::assertNotNull($categoryField);
     }
 
+    /** @covers \App\Controller\CategoryController::addFieldValue() */
+    public function testAddCategoryFieldWithExistsCombinationOfNameAndCategory(): void
+    {
+        $client = $this->getLoginByManagerClient(self::createClient(), $container = self::getContainer());
+
+        /** @var CategoryFieldRepository $fieldRepository */
+        $fieldRepository = $container->get(CategoryFieldRepository::class);
+        $field = $fieldRepository->findAll()[0];
+
+        $client->request('post', '/api/category/'.$field->getCategory()->getId().'/field', [
+            'name' => $field->getName(),
+        ]);
+
+        self::assertResponseStatusCodeSame(400);
+    }
+
+    /** @covers \App\Controller\CategoryController::addFieldValue() */
     public function testAddCategoryFieldValueSuccessful(): void
     {
         $client = $this->getLoginByManagerClient(self::createClient(), $container = self::getContainer());

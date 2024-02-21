@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/category')]
 #[IsGranted(User::ROLE_MANAGER)]
@@ -66,9 +68,17 @@ class CategoryController extends AbstractController
     public function addField(
         #[MapRequestPayload] AddCategoryFieldRequest $request,
         Category $category,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator
     ): JsonResponse {
         $categoryField = new CategoryField($request->name, $category);
+
+        $violations = $validator->validate($categoryField);
+
+        if (0 != count($violations)) {
+            throw new ValidationFailedException('Validation failed', $violations);
+        }
+
         $entityManager->persist($categoryField);
         $entityManager->flush();
 
