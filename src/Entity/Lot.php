@@ -25,6 +25,8 @@ class Lot
     #[ORM\OneToMany(mappedBy: 'lot', targetEntity: Order::class)]
     private Collection $orders;
 
+    #[ORM\ManyToMany(targetEntity: FieldValue::class)]
+    private Collection $fieldValues;
 
     public function __construct(
         #[ORM\Column(length: 255)]
@@ -43,10 +45,15 @@ class Lot
         #[ORM\JoinColumn(nullable: false)]
         private readonly User $owner,
 
+        #[ORM\ManyToOne(inversedBy: 'lots')]
+        #[ORM\JoinColumn(nullable: false)]
+        private readonly Category $category,
+
         #[ORM\Column(length: 255, nullable: false)]
         private ?string $preview = null
     ) {
         $this->lotDiscounts = new ArrayCollection();
+        $this->fieldValues = new ArrayCollection();
         $this->orders = new ArrayCollection();
     }
 
@@ -124,10 +131,37 @@ class Lot
         return $this->preview;
     }
 
-    public function setPreview(string $preview): static
+    public function getCategory(): ?Category
     {
-        $this->preview = $preview;
+        return $this->category;
+    }
 
-        return $this;
+    public function getFieldValues(): Collection
+    {
+        return $this->fieldValues;
+    }
+
+    public function addFieldValue(FieldValue $fieldValue): void
+    {
+        if ($fieldValue->getField()->getCategory() !== $this->category) {
+            throw new \DomainException('Данное значение не относится к полям категории этого лота');
+        }
+
+        if ($this->fieldValues->contains($fieldValue)) {
+            return;
+        }
+
+        $this->fieldValues->add($fieldValue);
+    }
+
+    public function removeFieldValue(FieldValue $fieldValue): void
+    {
+        if ($fieldValue->getField()->getCategory() !== $this->category) {
+            throw new \DomainException('Данное значение не относится к полям категории этого лота');
+        }
+
+        if ($this->fieldValues->contains($fieldValue)) {
+           $this->fieldValues->remove($fieldValue);
+        }
     }
 }

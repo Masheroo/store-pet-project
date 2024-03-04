@@ -4,6 +4,7 @@ namespace App\Tests\Api\Lot;
 
 use App\DataFixtures\UserFixture;
 use App\Entity\User;
+use App\Repository\CategoryRepository;
 use App\Repository\LotRepository;
 use App\Repository\UserRepository;
 use App\Tests\Helpers\FileSystemHelper;
@@ -41,6 +42,10 @@ class CreateTest extends WebTestCase
         $filePath = $testFilesDir.DIRECTORY_SEPARATOR.'test.png';
         copy($testFilesDir.DIRECTORY_SEPARATOR.'test-image.png', $filePath);
 
+        /** @var CategoryRepository $categoryRepository */
+        $categoryRepository = $container->get(CategoryRepository::class);
+        $category = $categoryRepository->findAll()[0];
+
         $client->request(
             'POST',
             '/api/lot',
@@ -48,6 +53,7 @@ class CreateTest extends WebTestCase
                 'title' => self::TITLE,
                 'cost' => self::COST,
                 'count' => self::COUNT,
+                'category' => $category->getId()
             ],
             files: [
                 'image' => $uploadedFile = new UploadedFile(

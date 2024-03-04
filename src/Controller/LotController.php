@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
+use App\Entity\FieldValue;
 use App\Entity\Lot;
 use App\Entity\Order;
 use App\Entity\User;
@@ -16,28 +18,35 @@ use App\Security\AccessValue;
 use App\Service\Discount\DiscountService;
 use App\Service\Lot\LotService;
 use App\Service\Manager\FileManager;
+use App\Service\Resolver\FilterResolver;
 use App\Service\Resolver\RequestPayloadValueResolver;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\VarExporter\Exception\NotInstantiableTypeException;
 
 #[Route('/api')]
 class LotController extends AbstractController
 {
-    #[Route('/lots', name: 'get_all_lots', methods: ['GET'])]
-    public function getAllLots(LotRepository $repository): JsonResponse
-    {
-        return $this->json($repository->findAll());
+    #[Route('/category/{id}/lots', name: 'get_all_lots', methods: ['GET'])]
+    public function getAllLots(
+        Request $request,
+        Category $category,
+        LotRepository $repository,
+        FilterResolver $resolver
+    ): JsonResponse {
+        $lots = $repository->findByFilters($resolver->resolve($request), $category);
+
+        return $this->json($lots);
     }
 
     #[Route('/lot/{id}', name: 'get_one_lot', methods: ['GET'])]
@@ -106,8 +115,6 @@ class LotController extends AbstractController
     }
 
     /**
-     * @throws NotInstantiableTypeException
-     * @throws NonUniqueResultException
      * @throws LotCountException
      */
     #[Route('/lot/buy/{lotId}', name: 'buy_lot', methods: ['POST'])]
@@ -145,5 +152,34 @@ class LotController extends AbstractController
         }
 
         return $this->json($order);
+    }
+
+    #[IsGranted(User::ROLE_MANAGER)]
+    #[Route('/lot/{lot_id}/field/{field_id}/add', name: 'add_category_field_value_to_lot', methods: ['POST'])]
+    public function addCategoryFieldValue(
+        #[MapEntity(id: 'lot_id')]
+        Lot $lot,
+        #[MapEntity(id: 'field_id')]
+        FieldValue $fieldValue,
+        EntityManagerInterface $manager
+    ): JsonResponse {
+        $lot->addFieldValue($fieldValue);
+        $manager->flush();
+
+        return $this->json($lot->getFieldValues());
+    }
+
+    #[Route('/lot/{lot_id}/field/{field_id}/remove', name: 'remove_category_field_value_to_lot', methods: ['DELETE'])]
+    public function removeCategoryFieldValue(
+        #[MapEntity(id: 'lot_id')]
+        Lot $lot,
+        #[MapEntity(id: 'field_id')]
+        FieldValue $fieldValue,
+        EntityManagerInterface $manager
+    ): JsonResponse {
+        $lot->removeFieldValue($fieldValue);
+        $manager->flush();
+
+        return $this->json($lot->getFieldValues());
     }
 }

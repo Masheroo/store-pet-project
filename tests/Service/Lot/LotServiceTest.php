@@ -4,6 +4,7 @@ namespace App\Tests\Service\Lot;
 
 use App\DataFixtures\UserFixture;
 use App\Entity\User;
+use App\Repository\CategoryRepository;
 use App\Repository\LotRepository;
 use App\Repository\UserRepository;
 use App\Request\CreateLotRequest;
@@ -23,10 +24,17 @@ class LotServiceTest extends KernelTestCase
     {
         self::bootKernel();
         $container = self::getContainer();
+
+        /** @var CategoryRepository $categoryRepository */
+        $categoryRepository = $container->get(CategoryRepository::class);
+        $category = $categoryRepository->findAll()[0];
+
         $createLotRequest = new CreateLotRequest();
         $createLotRequest->title = 'TestTitle';
         $createLotRequest->count = 1;
         $createLotRequest->cost = 10.1;
+        $createLotRequest->category = $category->getId();
+
         /** @var string $testFilesDirectory */
         $testFilesDirectory = $container->getParameter('test_files_dir');
         $file = new \SplFileInfo($testFilesDirectory.DIRECTORY_SEPARATOR.'test.png');

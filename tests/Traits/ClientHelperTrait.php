@@ -36,4 +36,13 @@ trait ClientHelperTrait
 
         return $client->loginUser($user);
     }
+    public function getLoginByManagerClient(KernelBrowser $client, ContainerInterface $container): KernelBrowser
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => UserFixture::MANAGER_EMAIL]);
+        assert($user != null);
+
+        return $client->loginUser($user);
+    }
 }

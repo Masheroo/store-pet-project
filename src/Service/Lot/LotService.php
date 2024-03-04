@@ -4,6 +4,7 @@ namespace App\Service\Lot;
 
 use App\Entity\Lot;
 use App\Entity\User;
+use App\Repository\CategoryRepository;
 use App\Repository\LotRepository;
 use App\Request\CreateLotRequest;
 use App\Request\UpdateLotRequest;
@@ -15,8 +16,9 @@ readonly class LotService
 {
     public function __construct(
         private LotImageManager $lotImageManager,
-        private readonly FileManager $fileManager,
-        private LotRepository $repository
+        private FileManager $fileManager,
+        private LotRepository $repository,
+        private CategoryRepository $categoryRepository
     ) {
     }
 
@@ -25,13 +27,16 @@ readonly class LotService
      */
     public function createLotFromRequest(CreateLotRequest $request, User $user): Lot
     {
+        $category = $this->categoryRepository->find($request->category);
+
         $lot = new Lot(
             $request->title,
-            $request->cost,
-            $request->count,
-            $this->fileManager->saveUploadedImage($request->image),
-            $user,
-            $this->lotImageManager->convertUploadedImageToPreviewAndSave($request->image)
+            cost: $request->cost,
+            count: $request->count,
+            image: $this->fileManager->saveUploadedImage($request->image),
+            owner: $user,
+            category: $category,
+            preview: $this->lotImageManager->convertUploadedImageToPreviewAndSave($request->image)
         );
 
         $this->repository->persistAndFlush($lot);

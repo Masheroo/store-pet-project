@@ -2,7 +2,6 @@
 
 namespace App\Tests\Api\Lot;
 
-use App\DataFixtures\LotFixture;
 use App\DataFixtures\UserFixture;
 use App\Entity\Lot;
 use App\Entity\User;
@@ -32,14 +31,15 @@ class GetMethodsTest extends WebTestCase
 
         /** @var LotRepository $lotRepository */
         $lotRepository = $container->get(LotRepository::class);
-        $countOfLots = count($lotRepository->findAll());
+        $lot = $lotRepository->findAll()[0];
+        $category = $lot->getCategory();
 
         $client->loginUser($user);
-        $client->request('GET', 'api/lots');
+        $client->request('GET', 'api/category/'.$category->getId().'/lots');
         $response = $this->getJsonDecodedResponse($client);
 
         self::assertResponseStatusCodeSame(200);
-        self::assertCount($countOfLots, $response);
+        self::assertCount(count($category->getLots()), $response);
     }
 
     /**
