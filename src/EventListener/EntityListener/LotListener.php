@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListener;
+namespace App\EventListener\EntityListener;
 
 use App\Controller\ExternalApiController;
 use App\Entity\Lot;
