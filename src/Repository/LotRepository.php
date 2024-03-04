@@ -57,4 +57,24 @@ class LotRepository extends ServiceEntityRepository
         $this->getEntityManager()->remove($lot);
         $this->getEntityManager()->flush();
     }
+
+    /**
+     * @param ?array $filters {filter:{valueId: int}}
+     */
+    public function findByFilters(?array $filters, \App\Entity\Category $category): array
+    {
+        $query = $this->createQueryBuilder('lot')
+            ->where('lot.category = :category')
+            ->setParameter('category', $category);
+
+        if ($filters || empty($filter)) {
+            foreach ($filters as $index => $filter) {
+                $query->join('lot.fieldValues', $currentJoin = 'lfv'.$index)
+                    ->andWhere(sprintf('%s.id in (:filter%s)', $currentJoin, $index))
+                    ->setParameter('filter'.$index, $filter);
+            }
+        }
+
+        return $query->getQuery()->getResult();
+    }
 }

@@ -25,6 +25,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Lock\LockFactory;
@@ -37,9 +38,13 @@ class LotController extends AbstractController
 {
     #[Route('/category/{id}/lots', name: 'get_all_lots', methods: ['GET'])]
     public function getAllLots(
+        Request $request,
         Category $category,
+        LotRepository $repository
     ): JsonResponse {
-        return $this->json($category->getLots());
+        $lots = $repository->findByFilters($request->query->all(), $category);
+
+        return $this->json($lots);
     }
 
     #[Route('/lot/{id}', name: 'get_one_lot', methods: ['GET'])]
